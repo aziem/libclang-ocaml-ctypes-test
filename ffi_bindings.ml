@@ -28,13 +28,15 @@ struct
   let cx_translation_unit : cx_translation_unit typ = ptr void
 
 
-  type cx_index 
-  let cx_index = (ptr void)
+  type cx_index = unit ptr
+  let cx_index : cx_index typ = (ptr void)
 
   let create_index_ = Foreign.foreign "clang_createIndex" (int @-> int @-> returning cx_index)
                         
   let create_translation_unit_from_source_ = Foreign.foreign "clang_createTranslationUnitFromSourceFile"
                                                              (cx_index @-> string @-> int @-> string @-> int @-> ptr void @-> returning cx_translation_unit)
+
+  let get_tu_spelling = Foreign.foreign "clang_getTranslationUnitSpelling" (cx_translation_unit @-> returning cx_string)
 
   type cx_cursor
   let cx_cursor : cx_cursor structure typ = structure "CXCursor"
@@ -44,5 +46,16 @@ struct
   let () = seal cx_cursor
 
   let cursor_of_translation_unit_ = Foreign.foreign "clang_getTranslationUnitCursor" (cx_translation_unit @-> returning cx_cursor)
+
+  type cx_client_data = unit ptr
+  let cx_client_data : cx_client_data typ = ptr void 
+     
+                                  
+  let cx_cursor_visitor = cx_cursor @-> cx_cursor @-> cx_client_data @-> returning T.cx_child_visit_result
+  let visit_children = Foreign.foreign "clang_visitChildren" (cx_cursor @-> Foreign.funptr cx_cursor_visitor @-> cx_client_data @-> returning uint)
+                     
+  let get_cursor_spelling = Foreign.foreign "clang_getCursorSpelling" (cx_cursor @-> returning cx_string)
+
+                          let get_display_name = Foreign.foreign "clang_getCursorDisplayName" (cx_cursor @-> returning cx_string)
                         
 end

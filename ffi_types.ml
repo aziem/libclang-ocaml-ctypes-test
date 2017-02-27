@@ -966,6 +966,22 @@ struct
       FirstExtraDecl, firstextradecl;
       LastExtraDecl, lastextradecl;
       OverloadCandidate, overloadcandidate;
-    ] 
+                         ]
+
+
+  type cx_child_visit_result =
+    | VisitBreak
+    | VisitContinue
+    | VisitRecurse
+
+  let visitbreak = constant "CXChildVisit_Break" int64_t
+  let visitcontinue = constant "CXChildVisit_Continue" int64_t
+  let visitrecurse = constant "CXChildVisit_Recurse" int64_t
+
+  let cx_child_visit_result = enum "CXChildVisitResult" [
+                                     VisitBreak, visitbreak;
+                                     VisitContinue, visitcontinue;
+                                     VisitRecurse, visitrecurse;
+                                   ]
 
 end

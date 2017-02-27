@@ -52,12 +52,34 @@ module TranslationIndex =
     let create_translation_unit_from_source index file compiler_options =
       let n = List.length compiler_options in
       let s = String.concat "," compiler_options in
-      B.create_translation_unit_from_source_ index file n s 0 null 
+      B.create_translation_unit_from_source_ index file n s 0 null
+
+    let get_tu_spelling tu =
+      B.getcstring_ (B.get_tu_spelling tu)
   end
 
 module Cursor =
   struct
     let kind = Types.cursor_kind
-    let cursor_of_translation_unit tu = B.cursor_of_translation_unit_ tu
+    let cursor_of_translation_unit tu = B.cursor_of_translation_unit_ tu 
+
+    let vistor cursor parent client_data =
+      (* let l = Root.get client_data in *)
+      (* let l' = List.cons cursor l in *)
+      (* Root.set client_data l'; *)
+      Types.VisitContinue
+      
+                                      
+    let children cursor =
+      let i = B.visit_children cursor vistor (to_voidp (allocate int 1)) in
+      Printf.printf "HI2\n"; flush stdout;
+      i
+
+    let name cursor =
+      B.getcstring_ (B.get_cursor_spelling cursor)
+
+    let displayname cursor = 
+      B.getcstring_ (B.get_display_name cursor)
+                                      
   end
   
