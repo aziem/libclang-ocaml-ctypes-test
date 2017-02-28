@@ -55,7 +55,10 @@ module TranslationIndex =
       B.create_translation_unit_from_source_ index file n s 0 null
 
     let get_tu_spelling tu =
-      B.getcstring_ (B.get_tu_spelling tu)
+      let i = (B.get_tu_spelling tu) in
+      let s = B.getcstring_ i in
+      B.disposecstring_ i;
+      s
   end
 
 module Cursor =
@@ -71,15 +74,25 @@ module Cursor =
       
                                       
     let children cursor =
-      let i = B.visit_children cursor vistor (to_voidp (allocate int 1)) in
+      let f = B.coerce B.cx_cursor_visitor vistor in
+      let i = B.visit_children_ cursor f (to_voidp (allocate int 1)) in
       Printf.printf "HI2\n"; flush stdout;
       i
 
     let name cursor =
-      B.getcstring_ (B.get_cursor_spelling cursor)
+      let i = (B.get_cursor_spelling cursor) in
+      let s = B.getcstring_ i in
+      B.disposecstring_ i;
+      s
 
     let displayname cursor = 
-      B.getcstring_ (B.get_display_name cursor)
+      let i = (B.get_display_name cursor) in
+      let s = B.getcstring_ i in
+      B.disposecstring_ i;
+      s
+
+    let cursor_is_null cursor =
+      B.cursor_is_null cursor 
                                       
   end
   

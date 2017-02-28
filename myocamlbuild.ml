@@ -963,7 +963,7 @@ let dispatch = function
       (fun _ _ ->
          Cmd(S[P ("./" ^ stubgen); A"-c"; Sh">"; A"ffi_generated_stubs.c"]));
 
-    flag ["c"; "compile"] & S[A"-I"; A"lib"; A"-I"; A llvmconfig; A"-ccopt"; A"-fPIC"; A"-package"; A"ctypes"; A"-package"; A"ctypes.stubs"]
+    flag ["c"; "compile"] & S[A"-I"; A"lib"; A"-I"; A llvmconfig; A"-ccopt"; A"-fPIC"; A"-package"; A"ctypes"]
 
   | _ ->
     ()
