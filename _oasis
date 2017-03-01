@@ -9,11 +9,12 @@ Plugins:        DevFiles (0.4), META (0.4)
 BuildTools:     ocamlbuild
 
 
-Library oclang
-  FindLibName: oclang
+Library clang
+  FindLibName: clang
   Install: true
   Path: .
-  Modules: Oclang, Ffi_types, Ffi_generated_types, Ffi_bindings, Ffi_generated
+  Modules: Oclang, Ffi_bindings
+  InternalModules: Ffi_generated, Ffi_generated_types
   CSources: ffi_generated_stubs.c
   CCLib: -lclang
   BuildDepends: ctypes, ctypes.stubs, ctypes.foreign
@@ -36,9 +37,8 @@ Executable ffi_stubgen
 
 
 Executable test
-  Install: true
+  Install: false
   Path: .
-  CCLib: -lclang
   MainIs: test.ml
-  BuildDepends: ctypes, ctypes.foreign, ctypes.stubs
+  BuildDepends: clang
   CompiledObject: native

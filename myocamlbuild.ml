@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 7d374dc06de47b089a808e37c0071992) *)
+(* DO NOT EDIT (digest: 4c2451375ed29d45e1d4399103628458) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -885,21 +885,17 @@ end
 open Ocamlbuild_plugin;;
 let package_default =
   {
-     MyOCamlbuildBase.lib_ocaml = [("oclang", [], [])];
-     lib_c = [("oclang", ".", [])];
+     MyOCamlbuildBase.lib_ocaml = [("clang", [], [])];
+     lib_c = [("clang", ".", [])];
      flags =
        [
-          (["oasis_library_oclang_cclib"; "link"],
+          (["oasis_library_clang_cclib"; "link"],
             [(OASISExpr.EBool true, S [A "-cclib"; A "-lclang"])]);
-          (["oasis_library_oclang_cclib"; "ocamlmklib"; "c"],
+          (["oasis_library_clang_cclib"; "ocamlmklib"; "c"],
             [(OASISExpr.EBool true, S [A "-lclang"])]);
           (["oasis_executable_ffi_stubgen_cclib"; "link"],
             [(OASISExpr.EBool true, S [A "-cclib"; A "-lclang"])]);
           (["oasis_executable_ffi_stubgen_cclib"; "ocamlmklib"; "c"],
-            [(OASISExpr.EBool true, S [A "-lclang"])]);
-          (["oasis_executable_test_cclib"; "link"],
-            [(OASISExpr.EBool true, S [A "-cclib"; A "-lclang"])]);
-          (["oasis_executable_test_cclib"; "ocamlmklib"; "c"],
             [(OASISExpr.EBool true, S [A "-lclang"])])
        ];
      includes = []
@@ -910,7 +906,7 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 914 "myocamlbuild.ml"
+# 910 "myocamlbuild.ml"
 (* OASIS_STOP *)
 
 let llvmconfig =

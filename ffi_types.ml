@@ -1,8 +1,14 @@
-open Ctypes
 
-module Types (F : Cstubs.Types.TYPE) = 
+module Types (F : Cstubs_structs.TYPE) = 
 struct
-  open F
+
+  type cx_string
+  let cx_string : cx_string Ctypes.structure F.typ = F.structure "_CXString"
+  let cx_string = F.typedef cx_string "CXString"
+  let cx_string_data = F.field cx_string "data" (F.ptr F.void) 
+  let cx_string_private_flags = F.field cx_string "private_flags" F.uint 
+  let () = F.seal cx_string 
+
 
   type cx_error_code = 
     | CXError_Success
@@ -11,13 +17,13 @@ struct
     | CXError_InvalidArguments
     | CXError_ASTReadError
 
-  let cxerror_success = constant "CXError_Success" int64_t
-  let cxerror_failure = constant "CXError_Failure" int64_t
-  let cxerror_crashed = constant "CXError_Crashed" int64_t
-  let cxerror_invalidarguments = constant "CXError_InvalidArguments" int64_t
-  let cxerror_astreaderror = constant "CXError_ASTReadError" int64_t
+  let cxerror_success = F.constant "CXError_Success" F.int64_t
+  let cxerror_failure = F.constant "CXError_Failure" F.int64_t
+  let cxerror_crashed = F.constant "CXError_Crashed" F.int64_t
+  let cxerror_invalidarguments = F.constant "CXError_InvalidArguments" F.int64_t
+  let cxerror_astreaderror = F.constant "CXError_ASTReadError" F.int64_t
 
-  let cx_error_code = enum "CXErrorCode" [
+  let cx_error_code = F.enum "CXErrorCode" [
       CXError_Success, cxerror_success;
       CXError_Failure, cxerror_failure;
       CXError_Crashed, cxerror_crashed;
@@ -80,61 +86,61 @@ struct
     | Elaborated
 
 
-  let invalid             = constant "CXType_Invalid" int64_t
-  let unexposed           = constant "CXType_Unexposed" int64_t
-  let cxvoid                = constant "CXType_Void" int64_t
-  let bool                = constant "CXType_Bool" int64_t
-  let char_u              = constant "CXType_Char_U" int64_t
-  let uchar               = constant "CXType_UChar" int64_t
-  let char16              = constant "CXType_Char16" int64_t
-  let char32              = constant "CXType_Char32" int64_t
-  let ushort              = constant "CXType_UShort" int64_t
-  let uint                = constant "CXType_UInt" int64_t
-  let ulong               = constant "CXType_ULong" int64_t
-  let ulonglong           = constant "CXType_ULongLong" int64_t
-  let uint128             = constant "CXType_UInt128" int64_t
-  let char_s              = constant "CXType_Char_S" int64_t
-  let schar               = constant "CXType_SChar" int64_t
-  let wchar               = constant "CXType_WChar" int64_t
-  let short               = constant "CXType_Short" int64_t
-  let int                 = constant "CXType_Int" int64_t
-  let long                = constant "CXType_Long" int64_t
-  let longlong            = constant "CXType_LongLong" int64_t
-  let int128              = constant "CXType_Int128" int64_t
-  let float               = constant "CXType_Float" int64_t
-  let double              = constant "CXType_Double" int64_t
-  let longdouble          = constant "CXType_LongDouble" int64_t
-  let nullptr             = constant "CXType_NullPtr" int64_t
-  let overload            = constant "CXType_Overload" int64_t
-  let dependent           = constant "CXType_Dependent" int64_t
-  let objcid              = constant "CXType_ObjCId" int64_t
-  let objcclass           = constant "CXType_ObjCClass" int64_t
-  let objcsel             = constant "CXType_ObjCSel" int64_t
-  let float128            = constant "CXType_Float128" int64_t
-  let firstbuiltin        = constant "CXType_FirstBuiltin" int64_t
-  let lastbuiltin         = constant "CXType_LastBuiltin"  int64_t
-  let complex             = constant "CXType_Complex" int64_t
-  let pointer             = constant "CXType_Pointer" int64_t
-  let blockpointer        = constant "CXType_BlockPointer" int64_t
-  let lvaluereference     = constant "CXType_LValueReference" int64_t
-  let rvaluereference     = constant "CXType_RValueReference" int64_t
-  let record              = constant "CXType_Record" int64_t
-  let cxenum                = constant "CXType_Enum" int64_t
-  let typedef             = constant "CXType_Typedef" int64_t
-  let objcinterface       = constant "CXType_ObjCInterface" int64_t
-  let objcobjectpointer   = constant "CXType_ObjCObjectPointer" int64_t
-  let functionnoproto     = constant "CXType_FunctionNoProto" int64_t
-  let functionproto       = constant "CXType_FunctionProto" int64_t
-  let constantarray       = constant "CXType_ConstantArray" int64_t
-  let vector              = constant "CXType_Vector" int64_t
-  let incompletearray     = constant "CXType_IncompleteArray" int64_t
-  let variablearray       = constant "CXType_VariableArray" int64_t
-  let dependentsizedarray = constant "CXType_DependentSizedArray" int64_t
-  let memberpointer       = constant "CXType_MemberPointer" int64_t
-  let auto                = constant "CXType_Auto" int64_t
-  let elaborated          = constant "CXType_Elaborated" int64_t
+  let invalid             = F.constant "CXType_Invalid" F.int64_t
+  let unexposed           = F.constant "CXType_Unexposed" F.int64_t
+  let cxvoid              = F.constant "CXType_Void" F.int64_t
+  let bool                = F.constant "CXType_Bool" F.int64_t
+  let char_u              = F.constant "CXType_Char_U" F.int64_t
+  let uchar               = F.constant "CXType_UChar" F.int64_t
+  let char16              = F.constant "CXType_Char16" F.int64_t
+  let char32              = F.constant "CXType_Char32" F.int64_t
+  let ushort              = F.constant "CXType_UShort" F.int64_t
+  let uint                = F.constant "CXType_UInt" F.int64_t
+  let ulong               = F.constant "CXType_ULong" F.int64_t
+  let ulonglong           = F.constant "CXType_ULongLong" F.int64_t
+  let uint128             = F.constant "CXType_UInt128" F.int64_t
+  let char_s              = F.constant "CXType_Char_S" F.int64_t
+  let schar               = F.constant "CXType_SChar" F.int64_t
+  let wchar               = F.constant "CXType_WChar" F.int64_t
+  let short               = F.constant "CXType_Short" F.int64_t
+  let int                 = F.constant "CXType_Int" F.int64_t
+  let long                = F.constant "CXType_Long" F.int64_t
+  let longlong            = F.constant "CXType_LongLong" F.int64_t
+  let int128              = F.constant "CXType_Int128" F.int64_t
+  let float               = F.constant "CXType_Float" F.int64_t
+  let double              = F.constant "CXType_Double" F.int64_t
+  let longdouble          = F.constant "CXType_LongDouble" F.int64_t
+  let nullptr             = F.constant "CXType_NullPtr" F.int64_t
+  let overload            = F.constant "CXType_Overload" F.int64_t
+  let dependent           = F.constant "CXType_Dependent" F.int64_t
+  let objcid              = F.constant "CXType_ObjCId" F.int64_t
+  let objcclass           = F.constant "CXType_ObjCClass" F.int64_t
+  let objcsel             = F.constant "CXType_ObjCSel" F.int64_t
+  let float128            = F.constant "CXType_Float128" F.int64_t
+  let firstbuiltin        = F.constant "CXType_FirstBuiltin" F.int64_t
+  let lastbuiltin         = F.constant "CXType_LastBuiltin"  F.int64_t
+  let complex             = F.constant "CXType_Complex" F.int64_t
+  let pointer             = F.constant "CXType_Pointer" F.int64_t
+  let blockpointer        = F.constant "CXType_BlockPointer" F.int64_t
+  let lvaluereference     = F.constant "CXType_LValueReference" F.int64_t
+  let rvaluereference     = F.constant "CXType_RValueReference" F.int64_t
+  let record              = F.constant "CXType_Record" F.int64_t
+  let cxenum              = F.constant "CXType_Enum" F.int64_t
+  let typedef             = F.constant "CXType_Typedef" F.int64_t
+  let objcinterface       = F.constant "CXType_ObjCInterface" F.int64_t
+  let objcobjectpointer   = F.constant "CXType_ObjCObjectPointer" F.int64_t
+  let functionnoproto     = F.constant "CXType_FunctionNoProto" F.int64_t
+  let functionproto       = F.constant "CXType_FunctionProto" F.int64_t
+  let constantarray       = F.constant "CXType_ConstantArray" F.int64_t
+  let vector              = F.constant "CXType_Vector" F.int64_t
+  let incompletearray     = F.constant "CXType_IncompleteArray" F.int64_t
+  let variablearray       = F.constant "CXType_VariableArray" F.int64_t
+  let dependentsizedarray = F.constant "CXType_DependentSizedArray" F.int64_t
+  let memberpointer       = F.constant "CXType_MemberPointer" F.int64_t
+  let auto                = F.constant "CXType_Auto" F.int64_t
+  let elaborated          = F.constant "CXType_Elaborated" F.int64_t
 
-  let kind = enum "CXTypeKind" [
+  let kind = F.enum "CXTypeKind" [
       Invalid, invalid;
       Unexposed, unexposed;
       Void, cxvoid;
@@ -205,25 +211,25 @@ struct
     | CallingConv_Invalid
     | CallingConv_Unexposed
 
-  let cxcallingconv_default = constant "CXCallingConv_Default" int64_t
-  let cxcallingconv_c = constant "CXCallingConv_C" int64_t
-  let cxcallingconv_x86stdcall = constant "CXCallingConv_X86StdCall" int64_t
-  let cxcallingconv_x86fastcall = constant "CXCallingConv_X86FastCall" int64_t
-  let cxcallingconv_x86thiscall = constant "CXCallingConv_X86ThisCall" int64_t
-  let cxcallingconv_x86pascal = constant "CXCallingConv_X86Pascal" int64_t
-  let cxcallingconv_aapcs = constant "CXCallingConv_AAPCS" int64_t
-  let cxcallingconv_aapcs_vfp = constant "CXCallingConv_AAPCS_VFP" int64_t
-  let cxcallingconv_inteloclbicc = constant "CXCallingConv_IntelOclBicc" int64_t
-  let cxcallingconv_x86_64win64 = constant "CXCallingConv_X86_64Win64" int64_t
-  let cxcallingconv_x86_64sysv = constant "CXCallingConv_X86_64SysV" int64_t
-  let cxcallingconv_x86vectorcall = constant "CXCallingConv_X86VectorCall" int64_t
-  let cxcallingconv_swift = constant "CXCallingConv_Swift" int64_t
-  let cxcallingconv_preservemost = constant "CXCallingConv_PreserveMost" int64_t
-  let cxcallingconv_preserveall = constant "CXCallingConv_PreserveAll" int64_t
-  let cxcallingconv_invalid = constant "CXCallingConv_Invalid" int64_t
-  let cxcallingconv_unexposed = constant "CXCallingConv_Unexposed" int64_t
+  let cxcallingconv_default       = F.constant "CXCallingConv_Default" F.int64_t
+  let cxcallingconv_c             = F.constant "CXCallingConv_C" F.int64_t
+  let cxcallingconv_x86stdcall    = F.constant "CXCallingConv_X86StdCall" F.int64_t
+  let cxcallingconv_x86fastcall   = F.constant "CXCallingConv_X86FastCall" F.int64_t
+  let cxcallingconv_x86thiscall   = F.constant "CXCallingConv_X86ThisCall" F.int64_t
+  let cxcallingconv_x86pascal     = F.constant "CXCallingConv_X86Pascal" F.int64_t
+  let cxcallingconv_aapcs         = F.constant "CXCallingConv_AAPCS" F.int64_t
+  let cxcallingconv_aapcs_vfp     = F.constant "CXCallingConv_AAPCS_VFP" F.int64_t
+  let cxcallingconv_inteloclbicc  = F.constant "CXCallingConv_IntelOclBicc" F.int64_t
+  let cxcallingconv_x86_64win64   = F.constant "CXCallingConv_X86_64Win64" F.int64_t
+  let cxcallingconv_x86_64sysv    = F.constant "CXCallingConv_X86_64SysV" F.int64_t
+  let cxcallingconv_x86vectorcall = F.constant "CXCallingConv_X86VectorCall" F.int64_t
+  let cxcallingconv_swift         = F.constant "CXCallingConv_Swift" F.int64_t
+  let cxcallingconv_preservemost  = F.constant "CXCallingConv_PreserveMost" F.int64_t
+  let cxcallingconv_preserveall   = F.constant "CXCallingConv_PreserveAll" F.int64_t
+  let cxcallingconv_invalid       = F.constant "CXCallingConv_Invalid" F.int64_t
+  let cxcallingconv_unexposed     = F.constant "CXCallingConv_Unexposed" F.int64_t
 
-  let calling_conv = enum "CXCallingConv" [
+  let calling_conv = F.enum "CXCallingConv" [
       CallingConv_Default, cxcallingconv_default;
       CallingConv_C, cxcallingconv_c;
       CallingConv_X86StdCall, cxcallingconv_x86stdcall;
@@ -246,13 +252,13 @@ struct
     | NotConstantSizeLayout
     | InvalidFieldNameLayout
 
-  let invalidlayout = constant "CXTypeLayoutError_Invalid"  int64_t
-  let incompletelayout = constant "CXTypeLayoutError_Incomplete"  int64_t
-  let dependentlayout = constant "CXTypeLayoutError_Dependent"  int64_t
-  let notconstantsizelayout = constant "CXTypeLayoutError_NotConstantSize"  int64_t
-  let invalidfieldnamelayout = constant "CXTypeLayoutError_InvalidFieldName"  int64_t
+  let invalidlayout          = F.constant "CXTypeLayoutError_Invalid"  F.int64_t
+  let incompletelayout       = F.constant "CXTypeLayoutError_Incomplete"  F.int64_t
+  let dependentlayout        = F.constant "CXTypeLayoutError_Dependent"  F.int64_t
+  let notconstantsizelayout  = F.constant "CXTypeLayoutError_NotConstantSize"  F.int64_t
+  let invalidfieldnamelayout = F.constant "CXTypeLayoutError_InvalidFieldName"  F.int64_t
 
-  let layout_error = enum "CXTypeLayoutError" [
+  let layout_error = F.enum "CXTypeLayoutError" [
       InvalidLayout, invalidlayout;
       IncompleteLayout, incompletelayout;
       DependentLayout, dependentlayout;
@@ -274,19 +280,19 @@ struct
     | CreatePreambleOnFirstParse
     | KeepGoing
 
-  let nooptions = constant "CXTranslationUnit_None" int64_t
-  let detailedpreprocessingrecord = constant "CXTranslationUnit_DetailedPreprocessingRecord" int64_t
-  let incomplete = constant "CXTranslationUnit_Incomplete" int64_t
-  let precompiledpreamble = constant "CXTranslationUnit_PrecompiledPreamble" int64_t
-  let cachecompletionresults = constant "CXTranslationUnit_CacheCompletionResults" int64_t
-  let forserialization = constant "CXTranslationUnit_ForSerialization" int64_t
-  let cxxchainedpch = constant "CXTranslationUnit_CXXChainedPCH" int64_t
-  let skipfunctionbodies = constant "CXTranslationUnit_SkipFunctionBodies" int64_t
-  let includebriefcommentsincodecompletion = constant "CXTranslationUnit_IncludeBriefCommentsInCodeCompletion" int64_t
-  let createpreambleonfirstparse = constant "CXTranslationUnit_CreatePreambleOnFirstParse" int64_t
-  let keepgoing = constant "CXTranslationUnit_KeepGoing" int64_t
+  let nooptions                            = F.constant "CXTranslationUnit_None" F.int64_t
+  let detailedpreprocessingrecord          = F.constant "CXTranslationUnit_DetailedPreprocessingRecord" F.int64_t
+  let incomplete                           = F.constant "CXTranslationUnit_Incomplete" F.int64_t
+  let precompiledpreamble                  = F.constant "CXTranslationUnit_PrecompiledPreamble" F.int64_t
+  let cachecompletionresults               = F.constant "CXTranslationUnit_CacheCompletionResults" F.int64_t
+  let forserialization                     = F.constant "CXTranslationUnit_ForSerialization" F.int64_t
+  let cxxchainedpch                        = F.constant "CXTranslationUnit_CXXChainedPCH" F.int64_t
+  let skipfunctionbodies                   = F.constant "CXTranslationUnit_SkipFunctionBodies" F.int64_t
+  let includebriefcommentsincodecompletion = F.constant "CXTranslationUnit_IncludeBriefCommentsInCodeCompletion" F.int64_t
+  let createpreambleonfirstparse           = F.constant "CXTranslationUnit_CreatePreambleOnFirstParse" F.int64_t
+  let keepgoing                            = F.constant "CXTranslationUnit_KeepGoing" F.int64_t
 
-  let translation_unit_options = enum "CXTranslationUnit_Flags"
+  let translation_unit_options = F.enum "CXTranslationUnit_Flags"
       [
         NoOptions, nooptions;
         DetailedPreprocessingRecord, detailedpreprocessingrecord;
@@ -522,230 +528,230 @@ struct
     | LastExtraDecl                 
     | OverloadCandidate             
 
-  let unexposeddecl                         = constant "CXCursor_UnexposedDecl" int64_t                 
-  let structdecl                            = constant "CXCursor_StructDecl" int64_t                    
-  let uniondecl                             = constant "CXCursor_UnionDecl" int64_t                     
-  let classdecl                             = constant "CXCursor_ClassDecl" int64_t                     
-  let enumdecl                              = constant "CXCursor_EnumDecl" int64_t                      
-  let fielddecl                             = constant "CXCursor_FieldDecl" int64_t                     
-  let enumconstantdecl                      = constant "CXCursor_EnumConstantDecl" int64_t              
-  let functiondecl                          = constant "CXCursor_FunctionDecl" int64_t                  
-  let vardecl                               = constant "CXCursor_VarDecl" int64_t                       
-  let parmdecl                              = constant "CXCursor_ParmDecl" int64_t                      
-  let objcinterfacedecl                     = constant "CXCursor_ObjCInterfaceDecl" int64_t             
-  let objccategorydecl                      = constant "CXCursor_ObjCCategoryDecl" int64_t              
-  let objcprotocoldecl                      = constant "CXCursor_ObjCProtocolDecl" int64_t              
-  let objcpropertydecl                      = constant "CXCursor_ObjCPropertyDecl" int64_t              
-  let objcivardecl                          = constant "CXCursor_ObjCIvarDecl" int64_t                  
-  let objcinstancemethoddecl                = constant "CXCursor_ObjCInstanceMethodDecl" int64_t        
-  let objcclassmethoddecl                   = constant "CXCursor_ObjCClassMethodDecl" int64_t           
-  let objcimplementationdecl                = constant "CXCursor_ObjCImplementationDecl" int64_t        
-  let objccategoryimpldecl                  = constant "CXCursor_ObjCCategoryImplDecl" int64_t          
-  let typedefdecl                           = constant "CXCursor_TypedefDecl" int64_t                   
-  let cxxmethod                             = constant "CXCursor_CXXMethod" int64_t                     
-  let namespace                             = constant "CXCursor_Namespace" int64_t                     
-  let linkagespec                           = constant "CXCursor_LinkageSpec" int64_t                   
-  let constructor                           = constant "CXCursor_Constructor" int64_t                   
-  let destructor                            = constant "CXCursor_Destructor" int64_t                    
-  let conversionfunction                    = constant "CXCursor_ConversionFunction" int64_t            
-  let templatetypeparameter                 = constant "CXCursor_TemplateTypeParameter" int64_t         
-  let nontypetemplateparameter              = constant "CXCursor_NonTypeTemplateParameter" int64_t      
-  let templatetemplateparameter             = constant "CXCursor_TemplateTemplateParameter" int64_t     
-  let functiontemplate                      = constant "CXCursor_FunctionTemplate" int64_t              
-  let classtemplate                         = constant "CXCursor_ClassTemplate" int64_t                 
-  let classtemplatepartialspecialization    = constant "CXCursor_ClassTemplatePartialSpecialization" int64_t 
-  let namespacealias                        = constant "CXCursor_NamespaceAlias" int64_t                
-  let usingdirective                        = constant "CXCursor_UsingDirective" int64_t                
-  let usingdeclaration                      = constant "CXCursor_UsingDeclaration" int64_t              
-  let typealiasdecl                         = constant "CXCursor_TypeAliasDecl" int64_t                 
-  let objcsynthesizedecl                    = constant "CXCursor_ObjCSynthesizeDecl" int64_t            
-  let objcdynamicdecl                       = constant "CXCursor_ObjCDynamicDecl" int64_t               
-  let cxxaccessspecifier                    = constant "CXCursor_CXXAccessSpecifier" int64_t            
-  let firstdecl                             = constant "CXCursor_FirstDecl" int64_t                     
-  let lastdecl                              = constant "CXCursor_LastDecl" int64_t                      
-  let firstref                              = constant "CXCursor_FirstRef" int64_t                      
-  let objcsuperclassref                     = constant "CXCursor_ObjCSuperClassRef" int64_t             
-  let objcprotocolref                       = constant "CXCursor_ObjCProtocolRef" int64_t               
-  let objcclassref                          = constant "CXCursor_ObjCClassRef" int64_t                  
-  let typeref                               = constant "CXCursor_TypeRef" int64_t                       
-  let cxxbasespecifier                      = constant "CXCursor_CXXBaseSpecifier" int64_t              
-  let templateref                           = constant "CXCursor_TemplateRef" int64_t                   
-  let namespaceref                          = constant "CXCursor_NamespaceRef" int64_t                  
-  let memberref                             = constant "CXCursor_MemberRef" int64_t                     
-  let labelref                              = constant "CXCursor_LabelRef" int64_t                      
-  let overloadeddeclref                     = constant "CXCursor_OverloadedDeclRef" int64_t             
-  let variableref                           = constant "CXCursor_VariableRef" int64_t                   
-  let lastref                               = constant "CXCursor_LastRef" int64_t                       
-  let firstinvalid                          = constant "CXCursor_FirstInvalid" int64_t                  
-  let invalidfile                           = constant "CXCursor_InvalidFile" int64_t                   
-  let nodeclfound                           = constant "CXCursor_NoDeclFound" int64_t                   
-  let notimplemented                        = constant "CXCursor_NotImplemented" int64_t                
-  let invalidcode                           = constant "CXCursor_InvalidCode" int64_t                   
-  let lastinvalid                           = constant "CXCursor_LastInvalid" int64_t                   
-  let firstexpr                             = constant "CXCursor_FirstExpr" int64_t                     
-  let unexposedexpr                         = constant "CXCursor_UnexposedExpr" int64_t                 
-  let declrefexpr                           = constant "CXCursor_DeclRefExpr" int64_t                   
-  let memberrefexpr                         = constant "CXCursor_MemberRefExpr" int64_t                 
-  let callexpr                              = constant "CXCursor_CallExpr" int64_t                      
-  let objcmessageexpr                       = constant "CXCursor_ObjCMessageExpr" int64_t               
-  let blockexpr                             = constant "CXCursor_BlockExpr" int64_t                     
-  let integerliteral                        = constant "CXCursor_IntegerLiteral" int64_t                
-  let floatingliteral                       = constant "CXCursor_FloatingLiteral" int64_t               
-  let imaginaryliteral                      = constant "CXCursor_ImaginaryLiteral" int64_t              
-  let stringliteral                         = constant "CXCursor_StringLiteral" int64_t                 
-  let characterliteral                      = constant "CXCursor_CharacterLiteral" int64_t              
-  let parenexpr                             = constant "CXCursor_ParenExpr" int64_t                     
-  let unaryoperator                         = constant "CXCursor_UnaryOperator" int64_t                 
-  let arraysubscriptexpr                    = constant "CXCursor_ArraySubscriptExpr" int64_t            
-  let binaryoperator                        = constant "CXCursor_BinaryOperator" int64_t                
-  let compoundassignoperator                = constant "CXCursor_CompoundAssignOperator" int64_t        
-  let conditionaloperator                   = constant "CXCursor_ConditionalOperator" int64_t           
-  let cstylecastexpr                        = constant "CXCursor_CStyleCastExpr" int64_t                
-  let compoundliteralexpr                   = constant "CXCursor_CompoundLiteralExpr" int64_t           
-  let initlistexpr                          = constant "CXCursor_InitListExpr" int64_t                  
-  let addrlabelexpr                         = constant "CXCursor_AddrLabelExpr" int64_t                 
-  let stmtexpr                              = constant "CXCursor_StmtExpr" int64_t                      
-  let genericselectionexpr                  = constant "CXCursor_GenericSelectionExpr" int64_t          
-  let gnunullexpr                           = constant "CXCursor_GNUNullExpr" int64_t                   
-  let cxxstaticcastexpr                     = constant "CXCursor_CXXStaticCastExpr" int64_t             
-  let cxxdynamiccastexpr                    = constant "CXCursor_CXXDynamicCastExpr" int64_t            
-  let cxxreinterpretcastexpr                = constant "CXCursor_CXXReinterpretCastExpr" int64_t        
-  let cxxconstcastexpr                      = constant "CXCursor_CXXConstCastExpr" int64_t              
-  let cxxfunctionalcastexpr                 = constant "CXCursor_CXXFunctionalCastExpr" int64_t         
-  let cxxtypeidexpr                         = constant "CXCursor_CXXTypeidExpr" int64_t                 
-  let cxxboolliteralexpr                    = constant "CXCursor_CXXBoolLiteralExpr" int64_t            
-  let cxxnullptrliteralexpr                 = constant "CXCursor_CXXNullPtrLiteralExpr" int64_t         
-  let cxxthisexpr                           = constant "CXCursor_CXXThisExpr" int64_t                   
-  let cxxthrowexpr                          = constant "CXCursor_CXXThrowExpr" int64_t                  
-  let cxxnewexpr                            = constant "CXCursor_CXXNewExpr" int64_t                    
-  let cxxdeleteexpr                         = constant "CXCursor_CXXDeleteExpr" int64_t                 
-  let unaryexpr                             = constant "CXCursor_UnaryExpr" int64_t                     
-  let objcstringliteral                     = constant "CXCursor_ObjCStringLiteral" int64_t             
-  let objcencodeexpr                        = constant "CXCursor_ObjCEncodeExpr" int64_t                
-  let objcselectorexpr                      = constant "CXCursor_ObjCSelectorExpr" int64_t              
-  let objcprotocolexpr                      = constant "CXCursor_ObjCProtocolExpr" int64_t              
-  let objcbridgedcastexpr                   = constant "CXCursor_ObjCBridgedCastExpr" int64_t           
-  let packexpansionexpr                     = constant "CXCursor_PackExpansionExpr" int64_t             
-  let sizeofpackexpr                        = constant "CXCursor_SizeOfPackExpr" int64_t                
-  let lambdaexpr                            = constant "CXCursor_LambdaExpr" int64_t                    
-  let objcboolliteralexpr                   = constant "CXCursor_ObjCBoolLiteralExpr" int64_t           
-  let objcselfexpr                          = constant "CXCursor_ObjCSelfExpr" int64_t                  
-  let omparraysectionexpr                   = constant "CXCursor_OMPArraySectionExpr" int64_t           
-  let objcavailabilitycheckexpr             = constant "CXCursor_ObjCAvailabilityCheckExpr" int64_t     
-  let lastexpr                              = constant "CXCursor_LastExpr" int64_t                      
-  let firststmt                             = constant "CXCursor_FirstStmt" int64_t                     
-  let unexposedstmt                         = constant "CXCursor_UnexposedStmt" int64_t                 
-  let labelstmt                             = constant "CXCursor_LabelStmt" int64_t                     
-  let compoundstmt                          = constant "CXCursor_CompoundStmt" int64_t                  
-  let casestmt                              = constant "CXCursor_CaseStmt" int64_t                      
-  let defaultstmt                           = constant "CXCursor_DefaultStmt" int64_t                   
-  let ifstmt                                = constant "CXCursor_IfStmt" int64_t                        
-  let switchstmt                            = constant "CXCursor_SwitchStmt" int64_t                    
-  let whilestmt                             = constant "CXCursor_WhileStmt" int64_t                     
-  let dostmt                                = constant "CXCursor_DoStmt" int64_t                        
-  let forstmt                               = constant "CXCursor_ForStmt" int64_t                       
-  let gotostmt                              = constant "CXCursor_GotoStmt" int64_t                      
-  let indirectgotostmt                      = constant "CXCursor_IndirectGotoStmt" int64_t              
-  let continuestmt                          = constant "CXCursor_ContinueStmt" int64_t                  
-  let breakstmt                             = constant "CXCursor_BreakStmt" int64_t                     
-  let returnstmt                            = constant "CXCursor_ReturnStmt" int64_t                    
-  let gccasmstmt                            = constant "CXCursor_GCCAsmStmt" int64_t                    
-  let asmstmt                               = constant "CXCursor_AsmStmt" int64_t                       
-  let objcattrystmt                         = constant "CXCursor_ObjCAtTryStmt" int64_t                 
-  let objcatcatchstmt                       = constant "CXCursor_ObjCAtCatchStmt" int64_t               
-  let objcatfinallystmt                     = constant "CXCursor_ObjCAtFinallyStmt" int64_t             
-  let objcatthrowstmt                       = constant "CXCursor_ObjCAtThrowStmt" int64_t               
-  let objcatsynchronizedstmt                = constant "CXCursor_ObjCAtSynchronizedStmt" int64_t        
-  let objcautoreleasepoolstmt               = constant "CXCursor_ObjCAutoreleasePoolStmt" int64_t       
-  let objcforcollectionstmt                 = constant "CXCursor_ObjCForCollectionStmt" int64_t         
-  let cxxcatchstmt                          = constant "CXCursor_CXXCatchStmt" int64_t                  
-  let cxxtrystmt                            = constant "CXCursor_CXXTryStmt" int64_t                    
-  let cxxforrangestmt                       = constant "CXCursor_CXXForRangeStmt" int64_t               
-  let sehtrystmt                            = constant "CXCursor_SEHTryStmt" int64_t                    
-  let sehexceptstmt                         = constant "CXCursor_SEHExceptStmt" int64_t                 
-  let sehfinallystmt                        = constant "CXCursor_SEHFinallyStmt" int64_t                
-  let msasmstmt                             = constant "CXCursor_MSAsmStmt" int64_t                     
-  let nullstmt                              = constant "CXCursor_NullStmt" int64_t                      
-  let declstmt                              = constant "CXCursor_DeclStmt" int64_t                      
-  let ompparalleldirective                  = constant "CXCursor_OMPParallelDirective" int64_t          
-  let ompsimddirective                      = constant "CXCursor_OMPSimdDirective" int64_t              
-  let ompfordirective                       = constant "CXCursor_OMPForDirective" int64_t               
-  let ompsectionsdirective                  = constant "CXCursor_OMPSectionsDirective" int64_t          
-  let ompsectiondirective                   = constant "CXCursor_OMPSectionDirective" int64_t           
-  let ompsingledirective                    = constant "CXCursor_OMPSingleDirective" int64_t            
-  let ompparallelfordirective               = constant "CXCursor_OMPParallelForDirective" int64_t       
-  let ompparallelsectionsdirective          = constant "CXCursor_OMPParallelSectionsDirective" int64_t  
-  let omptaskdirective                      = constant "CXCursor_OMPTaskDirective" int64_t              
-  let ompmasterdirective                    = constant "CXCursor_OMPMasterDirective" int64_t            
-  let ompcriticaldirective                  = constant "CXCursor_OMPCriticalDirective" int64_t          
-  let omptaskyielddirective                 = constant "CXCursor_OMPTaskyieldDirective" int64_t         
-  let ompbarrierdirective                   = constant "CXCursor_OMPBarrierDirective" int64_t           
-  let omptaskwaitdirective                  = constant "CXCursor_OMPTaskwaitDirective" int64_t          
-  let ompflushdirective                     = constant "CXCursor_OMPFlushDirective" int64_t             
-  let sehleavestmt                          = constant "CXCursor_SEHLeaveStmt" int64_t                  
-  let ompordereddirective                   = constant "CXCursor_OMPOrderedDirective" int64_t           
-  let ompatomicdirective                    = constant "CXCursor_OMPAtomicDirective" int64_t            
-  let ompforsimddirective                   = constant "CXCursor_OMPForSimdDirective" int64_t           
-  let ompparallelforsimddirective           = constant "CXCursor_OMPParallelForSimdDirective" int64_t   
-  let omptargetdirective                    = constant "CXCursor_OMPTargetDirective" int64_t            
-  let ompteamsdirective                     = constant "CXCursor_OMPTeamsDirective" int64_t             
-  let omptaskgroupdirective                 = constant "CXCursor_OMPTaskgroupDirective" int64_t         
-  let ompcancellationpointdirective         = constant "CXCursor_OMPCancellationPointDirective" int64_t 
-  let ompcanceldirective                    = constant "CXCursor_OMPCancelDirective" int64_t            
-  let omptargetdatadirective                = constant "CXCursor_OMPTargetDataDirective" int64_t        
-  let omptaskloopdirective                  = constant "CXCursor_OMPTaskLoopDirective" int64_t          
-  let omptaskloopsimddirective              = constant "CXCursor_OMPTaskLoopSimdDirective" int64_t      
-  let ompdistributedirective                = constant "CXCursor_OMPDistributeDirective" int64_t        
-  let omptargetenterdatadirective           = constant "CXCursor_OMPTargetEnterDataDirective" int64_t   
-  let omptargetexitdatadirective            = constant "CXCursor_OMPTargetExitDataDirective" int64_t    
-  let omptargetparalleldirective            = constant "CXCursor_OMPTargetParallelDirective" int64_t    
-  let omptargetparallelfordirective         = constant "CXCursor_OMPTargetParallelForDirective" int64_t 
-  let omptargetupdatedirective              = constant "CXCursor_OMPTargetUpdateDirective" int64_t      
-  let ompdistributeparallelfordirective     = constant "CXCursor_OMPDistributeParallelForDirective" int64_t 
-  let ompdistributeparallelforsimddirective = constant "CXCursor_OMPDistributeParallelForSimdDirective" int64_t 
-  let ompdistributesimddirective            = constant "CXCursor_OMPDistributeSimdDirective" int64_t 
-  let omptargetparallelforsimddirective     = constant "CXCursor_OMPTargetParallelForSimdDirective" int64_t 
-  let laststmt                              = constant "CXCursor_LastStmt" int64_t 
-  let translationunit                       = constant "CXCursor_TranslationUnit" int64_t               
-  let firstattr                             = constant "CXCursor_FirstAttr" int64_t                     
-  let unexposedattr                         = constant "CXCursor_UnexposedAttr" int64_t                 
-  let ibactionattr                          = constant "CXCursor_IBActionAttr" int64_t                  
-  let iboutletattr                          = constant "CXCursor_IBOutletAttr" int64_t                  
-  let iboutletcollectionattr                = constant "CXCursor_IBOutletCollectionAttr" int64_t        
-  let cxxfinalattr                          = constant "CXCursor_CXXFinalAttr" int64_t                  
-  let cxxoverrideattr                       = constant "CXCursor_CXXOverrideAttr" int64_t               
-  let annotateattr                          = constant "CXCursor_AnnotateAttr" int64_t                  
-  let asmlabelattr                          = constant "CXCursor_AsmLabelAttr" int64_t                  
-  let packedattr                            = constant "CXCursor_PackedAttr" int64_t                    
-  let pureattr                              = constant "CXCursor_PureAttr" int64_t                      
-  let constattr                             = constant "CXCursor_ConstAttr" int64_t                     
-  let noduplicateattr                       = constant "CXCursor_NoDuplicateAttr" int64_t               
-  let cudaconstantattr                      = constant "CXCursor_CUDAConstantAttr" int64_t              
-  let cudadeviceattr                        = constant "CXCursor_CUDADeviceAttr" int64_t                
-  let cudaglobalattr                        = constant "CXCursor_CUDAGlobalAttr" int64_t                
-  let cudahostattr                          = constant "CXCursor_CUDAHostAttr" int64_t                  
-  let cudasharedattr                        = constant "CXCursor_CUDASharedAttr" int64_t                
-  let visibilityattr                        = constant "CXCursor_VisibilityAttr" int64_t                
-  let dllexport                             = constant "CXCursor_DLLExport" int64_t                     
-  let dllimport                             = constant "CXCursor_DLLImport" int64_t                     
-  let lastattr                              = constant "CXCursor_LastAttr" int64_t                      
-  let preprocessingdirective                = constant "CXCursor_PreprocessingDirective" int64_t        
-  let macrodefinition                       = constant "CXCursor_MacroDefinition" int64_t               
-  let macroexpansion                        = constant "CXCursor_MacroExpansion" int64_t                
-  let macroinstantiation                    = constant "CXCursor_MacroInstantiation" int64_t            
-  let inclusiondirective                    = constant "CXCursor_InclusionDirective" int64_t            
-  let firstpreprocessing                    = constant "CXCursor_FirstPreprocessing" int64_t            
-  let lastpreprocessing                     = constant "CXCursor_LastPreprocessing" int64_t             
-  let moduleimportdecl                      = constant "CXCursor_ModuleImportDecl" int64_t              
-  let typealiastemplatedecl                 = constant "CXCursor_TypeAliasTemplateDecl" int64_t         
-  let staticassert                          = constant "CXCursor_StaticAssert" int64_t                  
-  let firstextradecl                        = constant "CXCursor_FirstExtraDecl" int64_t                
-  let lastextradecl                         = constant "CXCursor_LastExtraDecl" int64_t                 
-  let overloadcandidate                     = constant "CXCursor_OverloadCandidate" int64_t             
+  let unexposeddecl                         = F.constant "CXCursor_UnexposedDecl" F.int64_t                 
+  let structdecl                            = F.constant "CXCursor_StructDecl" F.int64_t                    
+  let uniondecl                             = F.constant "CXCursor_UnionDecl" F.int64_t                     
+  let classdecl                             = F.constant "CXCursor_ClassDecl" F.int64_t                     
+  let enumdecl                              = F.constant "CXCursor_EnumDecl" F.int64_t                      
+  let fielddecl                             = F.constant "CXCursor_FieldDecl" F.int64_t                     
+  let enumconstantdecl                      = F.constant "CXCursor_EnumConstantDecl" F.int64_t              
+  let functiondecl                          = F.constant "CXCursor_FunctionDecl" F.int64_t                  
+  let vardecl                               = F.constant "CXCursor_VarDecl" F.int64_t                       
+  let parmdecl                              = F.constant "CXCursor_ParmDecl" F.int64_t                      
+  let objcinterfacedecl                     = F.constant "CXCursor_ObjCInterfaceDecl" F.int64_t             
+  let objccategorydecl                      = F.constant "CXCursor_ObjCCategoryDecl" F.int64_t              
+  let objcprotocoldecl                      = F.constant "CXCursor_ObjCProtocolDecl" F.int64_t              
+  let objcpropertydecl                      = F.constant "CXCursor_ObjCPropertyDecl" F.int64_t              
+  let objcivardecl                          = F.constant "CXCursor_ObjCIvarDecl" F.int64_t                  
+  let objcinstancemethoddecl                = F.constant "CXCursor_ObjCInstanceMethodDecl" F.int64_t        
+  let objcclassmethoddecl                   = F.constant "CXCursor_ObjCClassMethodDecl" F.int64_t           
+  let objcimplementationdecl                = F.constant "CXCursor_ObjCImplementationDecl" F.int64_t        
+  let objccategoryimpldecl                  = F.constant "CXCursor_ObjCCategoryImplDecl" F.int64_t          
+  let typedefdecl                           = F.constant "CXCursor_TypedefDecl" F.int64_t                   
+  let cxxmethod                             = F.constant "CXCursor_CXXMethod" F.int64_t                     
+  let namespace                             = F.constant "CXCursor_Namespace" F.int64_t                     
+  let linkagespec                           = F.constant "CXCursor_LinkageSpec" F.int64_t                   
+  let constructor                           = F.constant "CXCursor_Constructor" F.int64_t                   
+  let destructor                            = F.constant "CXCursor_Destructor" F.int64_t                    
+  let conversionfunction                    = F.constant "CXCursor_ConversionFunction" F.int64_t            
+  let templatetypeparameter                 = F.constant "CXCursor_TemplateTypeParameter" F.int64_t         
+  let nontypetemplateparameter              = F.constant "CXCursor_NonTypeTemplateParameter" F.int64_t      
+  let templatetemplateparameter             = F.constant "CXCursor_TemplateTemplateParameter" F.int64_t     
+  let functiontemplate                      = F.constant "CXCursor_FunctionTemplate" F.int64_t              
+  let classtemplate                         = F.constant "CXCursor_ClassTemplate" F.int64_t                 
+  let classtemplatepartialspecialization    = F.constant "CXCursor_ClassTemplatePartialSpecialization" F.int64_t 
+  let namespacealias                        = F.constant "CXCursor_NamespaceAlias" F.int64_t                
+  let usingdirective                        = F.constant "CXCursor_UsingDirective" F.int64_t                
+  let usingdeclaration                      = F.constant "CXCursor_UsingDeclaration" F.int64_t              
+  let typealiasdecl                         = F.constant "CXCursor_TypeAliasDecl" F.int64_t                 
+  let objcsynthesizedecl                    = F.constant "CXCursor_ObjCSynthesizeDecl" F.int64_t            
+  let objcdynamicdecl                       = F.constant "CXCursor_ObjCDynamicDecl" F.int64_t               
+  let cxxaccessspecifier                    = F.constant "CXCursor_CXXAccessSpecifier" F.int64_t            
+  let firstdecl                             = F.constant "CXCursor_FirstDecl" F.int64_t                     
+  let lastdecl                              = F.constant "CXCursor_LastDecl" F.int64_t                      
+  let firstref                              = F.constant "CXCursor_FirstRef" F.int64_t                      
+  let objcsuperclassref                     = F.constant "CXCursor_ObjCSuperClassRef" F.int64_t             
+  let objcprotocolref                       = F.constant "CXCursor_ObjCProtocolRef" F.int64_t               
+  let objcclassref                          = F.constant "CXCursor_ObjCClassRef" F.int64_t                  
+  let typeref                               = F.constant "CXCursor_TypeRef" F.int64_t                       
+  let cxxbasespecifier                      = F.constant "CXCursor_CXXBaseSpecifier" F.int64_t              
+  let templateref                           = F.constant "CXCursor_TemplateRef" F.int64_t                   
+  let namespaceref                          = F.constant "CXCursor_NamespaceRef" F.int64_t                  
+  let memberref                             = F.constant "CXCursor_MemberRef" F.int64_t                     
+  let labelref                              = F.constant "CXCursor_LabelRef" F.int64_t                      
+  let overloadeddeclref                     = F.constant "CXCursor_OverloadedDeclRef" F.int64_t             
+  let variableref                           = F.constant "CXCursor_VariableRef" F.int64_t                   
+  let lastref                               = F.constant "CXCursor_LastRef" F.int64_t                       
+  let firstinvalid                          = F.constant "CXCursor_FirstInvalid" F.int64_t                  
+  let invalidfile                           = F.constant "CXCursor_InvalidFile" F.int64_t                   
+  let nodeclfound                           = F.constant "CXCursor_NoDeclFound" F.int64_t                   
+  let notimplemented                        = F.constant "CXCursor_NotImplemented" F.int64_t                
+  let invalidcode                           = F.constant "CXCursor_InvalidCode" F.int64_t                   
+  let lastinvalid                           = F.constant "CXCursor_LastInvalid" F.int64_t                   
+  let firstexpr                             = F.constant "CXCursor_FirstExpr" F.int64_t                     
+  let unexposedexpr                         = F.constant "CXCursor_UnexposedExpr" F.int64_t                 
+  let declrefexpr                           = F.constant "CXCursor_DeclRefExpr" F.int64_t                   
+  let memberrefexpr                         = F.constant "CXCursor_MemberRefExpr" F.int64_t                 
+  let callexpr                              = F.constant "CXCursor_CallExpr" F.int64_t                      
+  let objcmessageexpr                       = F.constant "CXCursor_ObjCMessageExpr" F.int64_t               
+  let blockexpr                             = F.constant "CXCursor_BlockExpr" F.int64_t                     
+  let integerliteral                        = F.constant "CXCursor_IntegerLiteral" F.int64_t                
+  let floatingliteral                       = F.constant "CXCursor_FloatingLiteral" F.int64_t               
+  let imaginaryliteral                      = F.constant "CXCursor_ImaginaryLiteral" F.int64_t              
+  let stringliteral                         = F.constant "CXCursor_StringLiteral" F.int64_t                 
+  let characterliteral                      = F.constant "CXCursor_CharacterLiteral" F.int64_t              
+  let parenexpr                             = F.constant "CXCursor_ParenExpr" F.int64_t                     
+  let unaryoperator                         = F.constant "CXCursor_UnaryOperator" F.int64_t                 
+  let arraysubscriptexpr                    = F.constant "CXCursor_ArraySubscriptExpr" F.int64_t            
+  let binaryoperator                        = F.constant "CXCursor_BinaryOperator" F.int64_t                
+  let compoundassignoperator                = F.constant "CXCursor_CompoundAssignOperator" F.int64_t        
+  let conditionaloperator                   = F.constant "CXCursor_ConditionalOperator" F.int64_t           
+  let cstylecastexpr                        = F.constant "CXCursor_CStyleCastExpr" F.int64_t                
+  let compoundliteralexpr                   = F.constant "CXCursor_CompoundLiteralExpr" F.int64_t           
+  let initlistexpr                          = F.constant "CXCursor_InitListExpr" F.int64_t                  
+  let addrlabelexpr                         = F.constant "CXCursor_AddrLabelExpr" F.int64_t                 
+  let stmtexpr                              = F.constant "CXCursor_StmtExpr" F.int64_t                      
+  let genericselectionexpr                  = F.constant "CXCursor_GenericSelectionExpr" F.int64_t          
+  let gnunullexpr                           = F.constant "CXCursor_GNUNullExpr" F.int64_t                   
+  let cxxstaticcastexpr                     = F.constant "CXCursor_CXXStaticCastExpr" F.int64_t             
+  let cxxdynamiccastexpr                    = F.constant "CXCursor_CXXDynamicCastExpr" F.int64_t            
+  let cxxreinterpretcastexpr                = F.constant "CXCursor_CXXReinterpretCastExpr" F.int64_t        
+  let cxxconstcastexpr                      = F.constant "CXCursor_CXXConstCastExpr" F.int64_t              
+  let cxxfunctionalcastexpr                 = F.constant "CXCursor_CXXFunctionalCastExpr" F.int64_t         
+  let cxxtypeidexpr                         = F.constant "CXCursor_CXXTypeidExpr" F.int64_t                 
+  let cxxboolliteralexpr                    = F.constant "CXCursor_CXXBoolLiteralExpr" F.int64_t            
+  let cxxnullptrliteralexpr                 = F.constant "CXCursor_CXXNullPtrLiteralExpr" F.int64_t         
+  let cxxthisexpr                           = F.constant "CXCursor_CXXThisExpr" F.int64_t                   
+  let cxxthrowexpr                          = F.constant "CXCursor_CXXThrowExpr" F.int64_t                  
+  let cxxnewexpr                            = F.constant "CXCursor_CXXNewExpr" F.int64_t                    
+  let cxxdeleteexpr                         = F.constant "CXCursor_CXXDeleteExpr" F.int64_t                 
+  let unaryexpr                             = F.constant "CXCursor_UnaryExpr" F.int64_t                     
+  let objcstringliteral                     = F.constant "CXCursor_ObjCStringLiteral" F.int64_t             
+  let objcencodeexpr                        = F.constant "CXCursor_ObjCEncodeExpr" F.int64_t                
+  let objcselectorexpr                      = F.constant "CXCursor_ObjCSelectorExpr" F.int64_t              
+  let objcprotocolexpr                      = F.constant "CXCursor_ObjCProtocolExpr" F.int64_t              
+  let objcbridgedcastexpr                   = F.constant "CXCursor_ObjCBridgedCastExpr" F.int64_t           
+  let packexpansionexpr                     = F.constant "CXCursor_PackExpansionExpr" F.int64_t             
+  let sizeofpackexpr                        = F.constant "CXCursor_SizeOfPackExpr" F.int64_t                
+  let lambdaexpr                            = F.constant "CXCursor_LambdaExpr" F.int64_t                    
+  let objcboolliteralexpr                   = F.constant "CXCursor_ObjCBoolLiteralExpr" F.int64_t           
+  let objcselfexpr                          = F.constant "CXCursor_ObjCSelfExpr" F.int64_t                  
+  let omparraysectionexpr                   = F.constant "CXCursor_OMPArraySectionExpr" F.int64_t           
+  let objcavailabilitycheckexpr             = F.constant "CXCursor_ObjCAvailabilityCheckExpr" F.int64_t     
+  let lastexpr                              = F.constant "CXCursor_LastExpr" F.int64_t                      
+  let firststmt                             = F.constant "CXCursor_FirstStmt" F.int64_t                     
+  let unexposedstmt                         = F.constant "CXCursor_UnexposedStmt" F.int64_t                 
+  let labelstmt                             = F.constant "CXCursor_LabelStmt" F.int64_t                     
+  let compoundstmt                          = F.constant "CXCursor_CompoundStmt" F.int64_t                  
+  let casestmt                              = F.constant "CXCursor_CaseStmt" F.int64_t                      
+  let defaultstmt                           = F.constant "CXCursor_DefaultStmt" F.int64_t                   
+  let ifstmt                                = F.constant "CXCursor_IfStmt" F.int64_t                        
+  let switchstmt                            = F.constant "CXCursor_SwitchStmt" F.int64_t                    
+  let whilestmt                             = F.constant "CXCursor_WhileStmt" F.int64_t                     
+  let dostmt                                = F.constant "CXCursor_DoStmt" F.int64_t                        
+  let forstmt                               = F.constant "CXCursor_ForStmt" F.int64_t                       
+  let gotostmt                              = F.constant "CXCursor_GotoStmt" F.int64_t                      
+  let indirectgotostmt                      = F.constant "CXCursor_IndirectGotoStmt" F.int64_t              
+  let continuestmt                          = F.constant "CXCursor_ContinueStmt" F.int64_t                  
+  let breakstmt                             = F.constant "CXCursor_BreakStmt" F.int64_t                     
+  let returnstmt                            = F.constant "CXCursor_ReturnStmt" F.int64_t                    
+  let gccasmstmt                            = F.constant "CXCursor_GCCAsmStmt" F.int64_t                    
+  let asmstmt                               = F.constant "CXCursor_AsmStmt" F.int64_t                       
+  let objcattrystmt                         = F.constant "CXCursor_ObjCAtTryStmt" F.int64_t                 
+  let objcatcatchstmt                       = F.constant "CXCursor_ObjCAtCatchStmt" F.int64_t               
+  let objcatfinallystmt                     = F.constant "CXCursor_ObjCAtFinallyStmt" F.int64_t             
+  let objcatthrowstmt                       = F.constant "CXCursor_ObjCAtThrowStmt" F.int64_t               
+  let objcatsynchronizedstmt                = F.constant "CXCursor_ObjCAtSynchronizedStmt" F.int64_t        
+  let objcautoreleasepoolstmt               = F.constant "CXCursor_ObjCAutoreleasePoolStmt" F.int64_t       
+  let objcforcollectionstmt                 = F.constant "CXCursor_ObjCForCollectionStmt" F.int64_t         
+  let cxxcatchstmt                          = F.constant "CXCursor_CXXCatchStmt" F.int64_t                  
+  let cxxtrystmt                            = F.constant "CXCursor_CXXTryStmt" F.int64_t                    
+  let cxxforrangestmt                       = F.constant "CXCursor_CXXForRangeStmt" F.int64_t               
+  let sehtrystmt                            = F.constant "CXCursor_SEHTryStmt" F.int64_t                    
+  let sehexceptstmt                         = F.constant "CXCursor_SEHExceptStmt" F.int64_t                 
+  let sehfinallystmt                        = F.constant "CXCursor_SEHFinallyStmt" F.int64_t                
+  let msasmstmt                             = F.constant "CXCursor_MSAsmStmt" F.int64_t                     
+  let nullstmt                              = F.constant "CXCursor_NullStmt" F.int64_t                      
+  let declstmt                              = F.constant "CXCursor_DeclStmt" F.int64_t                      
+  let ompparalleldirective                  = F.constant "CXCursor_OMPParallelDirective" F.int64_t          
+  let ompsimddirective                      = F.constant "CXCursor_OMPSimdDirective" F.int64_t              
+  let ompfordirective                       = F.constant "CXCursor_OMPForDirective" F.int64_t               
+  let ompsectionsdirective                  = F.constant "CXCursor_OMPSectionsDirective" F.int64_t          
+  let ompsectiondirective                   = F.constant "CXCursor_OMPSectionDirective" F.int64_t           
+  let ompsingledirective                    = F.constant "CXCursor_OMPSingleDirective" F.int64_t            
+  let ompparallelfordirective               = F.constant "CXCursor_OMPParallelForDirective" F.int64_t       
+  let ompparallelsectionsdirective          = F.constant "CXCursor_OMPParallelSectionsDirective" F.int64_t  
+  let omptaskdirective                      = F.constant "CXCursor_OMPTaskDirective" F.int64_t              
+  let ompmasterdirective                    = F.constant "CXCursor_OMPMasterDirective" F.int64_t            
+  let ompcriticaldirective                  = F.constant "CXCursor_OMPCriticalDirective" F.int64_t          
+  let omptaskyielddirective                 = F.constant "CXCursor_OMPTaskyieldDirective" F.int64_t         
+  let ompbarrierdirective                   = F.constant "CXCursor_OMPBarrierDirective" F.int64_t           
+  let omptaskwaitdirective                  = F.constant "CXCursor_OMPTaskwaitDirective" F.int64_t          
+  let ompflushdirective                     = F.constant "CXCursor_OMPFlushDirective" F.int64_t             
+  let sehleavestmt                          = F.constant "CXCursor_SEHLeaveStmt" F.int64_t                  
+  let ompordereddirective                   = F.constant "CXCursor_OMPOrderedDirective" F.int64_t           
+  let ompatomicdirective                    = F.constant "CXCursor_OMPAtomicDirective" F.int64_t            
+  let ompforsimddirective                   = F.constant "CXCursor_OMPForSimdDirective" F.int64_t           
+  let ompparallelforsimddirective           = F.constant "CXCursor_OMPParallelForSimdDirective" F.int64_t   
+  let omptargetdirective                    = F.constant "CXCursor_OMPTargetDirective" F.int64_t            
+  let ompteamsdirective                     = F.constant "CXCursor_OMPTeamsDirective" F.int64_t             
+  let omptaskgroupdirective                 = F.constant "CXCursor_OMPTaskgroupDirective" F.int64_t         
+  let ompcancellationpointdirective         = F.constant "CXCursor_OMPCancellationPointDirective" F.int64_t 
+  let ompcanceldirective                    = F.constant "CXCursor_OMPCancelDirective" F.int64_t            
+  let omptargetdatadirective                = F.constant "CXCursor_OMPTargetDataDirective" F.int64_t        
+  let omptaskloopdirective                  = F.constant "CXCursor_OMPTaskLoopDirective" F.int64_t          
+  let omptaskloopsimddirective              = F.constant "CXCursor_OMPTaskLoopSimdDirective" F.int64_t      
+  let ompdistributedirective                = F.constant "CXCursor_OMPDistributeDirective" F.int64_t        
+  let omptargetenterdatadirective           = F.constant "CXCursor_OMPTargetEnterDataDirective" F.int64_t   
+  let omptargetexitdatadirective            = F.constant "CXCursor_OMPTargetExitDataDirective" F.int64_t    
+  let omptargetparalleldirective            = F.constant "CXCursor_OMPTargetParallelDirective" F.int64_t    
+  let omptargetparallelfordirective         = F.constant "CXCursor_OMPTargetParallelForDirective" F.int64_t 
+  let omptargetupdatedirective              = F.constant "CXCursor_OMPTargetUpdateDirective" F.int64_t      
+  let ompdistributeparallelfordirective     = F.constant "CXCursor_OMPDistributeParallelForDirective" F.int64_t 
+  let ompdistributeparallelforsimddirective = F.constant "CXCursor_OMPDistributeParallelForSimdDirective" F.int64_t 
+  let ompdistributesimddirective            = F.constant "CXCursor_OMPDistributeSimdDirective" F.int64_t 
+  let omptargetparallelforsimddirective     = F.constant "CXCursor_OMPTargetParallelForSimdDirective" F.int64_t 
+  let laststmt                              = F.constant "CXCursor_LastStmt" F.int64_t 
+  let translationunit                       = F.constant "CXCursor_TranslationUnit" F.int64_t               
+  let firstattr                             = F.constant "CXCursor_FirstAttr" F.int64_t                     
+  let unexposedattr                         = F.constant "CXCursor_UnexposedAttr" F.int64_t                 
+  let ibactionattr                          = F.constant "CXCursor_IBActionAttr" F.int64_t                  
+  let iboutletattr                          = F.constant "CXCursor_IBOutletAttr" F.int64_t                  
+  let iboutletcollectionattr                = F.constant "CXCursor_IBOutletCollectionAttr" F.int64_t        
+  let cxxfinalattr                          = F.constant "CXCursor_CXXFinalAttr" F.int64_t                  
+  let cxxoverrideattr                       = F.constant "CXCursor_CXXOverrideAttr" F.int64_t               
+  let annotateattr                          = F.constant "CXCursor_AnnotateAttr" F.int64_t                  
+  let asmlabelattr                          = F.constant "CXCursor_AsmLabelAttr" F.int64_t                  
+  let packedattr                            = F.constant "CXCursor_PackedAttr" F.int64_t                    
+  let pureattr                              = F.constant "CXCursor_PureAttr" F.int64_t                      
+  let constattr                             = F.constant "CXCursor_ConstAttr" F.int64_t                     
+  let noduplicateattr                       = F.constant "CXCursor_NoDuplicateAttr" F.int64_t               
+  let cudaconstantattr                      = F.constant "CXCursor_CUDAConstantAttr" F.int64_t              
+  let cudadeviceattr                        = F.constant "CXCursor_CUDADeviceAttr" F.int64_t                
+  let cudaglobalattr                        = F.constant "CXCursor_CUDAGlobalAttr" F.int64_t                
+  let cudahostattr                          = F.constant "CXCursor_CUDAHostAttr" F.int64_t                  
+  let cudasharedattr                        = F.constant "CXCursor_CUDASharedAttr" F.int64_t                
+  let visibilityattr                        = F.constant "CXCursor_VisibilityAttr" F.int64_t                
+  let dllexport                             = F.constant "CXCursor_DLLExport" F.int64_t                     
+  let dllimport                             = F.constant "CXCursor_DLLImport" F.int64_t                     
+  let lastattr                              = F.constant "CXCursor_LastAttr" F.int64_t                      
+  let preprocessingdirective                = F.constant "CXCursor_PreprocessingDirective" F.int64_t        
+  let macrodefinition                       = F.constant "CXCursor_MacroDefinition" F.int64_t               
+  let macroexpansion                        = F.constant "CXCursor_MacroExpansion" F.int64_t                
+  let macroinstantiation                    = F.constant "CXCursor_MacroInstantiation" F.int64_t            
+  let inclusiondirective                    = F.constant "CXCursor_InclusionDirective" F.int64_t            
+  let firstpreprocessing                    = F.constant "CXCursor_FirstPreprocessing" F.int64_t            
+  let lastpreprocessing                     = F.constant "CXCursor_LastPreprocessing" F.int64_t             
+  let moduleimportdecl                      = F.constant "CXCursor_ModuleImportDecl" F.int64_t              
+  let typealiastemplatedecl                 = F.constant "CXCursor_TypeAliasTemplateDecl" F.int64_t         
+  let staticassert                          = F.constant "CXCursor_StaticAssert" F.int64_t                  
+  let firstextradecl                        = F.constant "CXCursor_FirstExtraDecl" F.int64_t                
+  let lastextradecl                         = F.constant "CXCursor_LastExtraDecl" F.int64_t                 
+  let overloadcandidate                     = F.constant "CXCursor_OverloadCandidate" F.int64_t             
 
 
 
-  let cursor_kind = enum "CXCursorKind" [
+  let cursor_kind = F.enum "CXCursorKind" [
       UnexposedDecl, unexposeddecl;
       StructDecl, structdecl;
       UnionDecl, uniondecl;
@@ -974,14 +980,43 @@ struct
     | VisitContinue
     | VisitRecurse
 
-  let visitbreak = constant "CXChildVisit_Break" int64_t
-  let visitcontinue = constant "CXChildVisit_Continue" int64_t
-  let visitrecurse = constant "CXChildVisit_Recurse" int64_t
+  let visitbreak = F.constant "CXChildVisit_Break" F.int64_t
+  let visitcontinue = F.constant "CXChildVisit_Continue" F.int64_t
+  let visitrecurse = F.constant "CXChildVisit_Recurse" F.int64_t
 
-  let cx_child_visit_result = enum "CXChildVisitResult" [
+  let cx_child_visit_result = F.enum "CXChildVisitResult" [
                                      VisitBreak, visitbreak;
                                      VisitContinue, visitcontinue;
                                      VisitRecurse, visitrecurse;
+
                                    ]
+
+  type cx_type
+  let cx_type : cx_type Ctypes.structure F.typ = F.structure "_CXType"
+  let cx_type = F.typedef cx_type "CXType"
+  let kind = F.field cx_type "kind" kind
+  let d = F.field cx_type "data" (F.array 2 (F.ptr F.void))
+  let () = F.seal cx_type
+  type cx_cursor
+
+  let cx_cursor : cx_cursor Ctypes.structure F.typ = F.structure "_CXCursor"
+  let cx_cursor = F.typedef cx_cursor "CXCursor" 
+  let kind = F.field cx_cursor "kind" cursor_kind
+  let xdata = F.field cx_cursor "xdata" F.int
+  (*let data = F.field cx_cursor "data" (F.array 3 (F.ptr F.void)) *)
+  let data = Array.init 3 (fun i -> F.field cx_cursor ("data") (F.ptr F.void))
+  let () = F.seal cx_cursor 
+
+  type cx_client_data = unit Ctypes.ptr
+  let cx_client_data : cx_client_data F.typ = F.ptr F.void 
+
+  type cx_translation_unit = unit Ctypes.ptr
+  let cx_translation_unit : cx_translation_unit F.typ = F.ptr F.void
+
+  type cx_index = unit Ctypes.ptr
+  let cx_index : cx_index F.typ = (F.ptr F.void)
+
+
+
 
 end

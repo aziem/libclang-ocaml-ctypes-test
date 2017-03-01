@@ -1,3 +1,6 @@
+module B = Ffi_bindings.Bindings(Ffi_generated_types)
+
+
 let _ =
   let prefix = "clang_stub" in
   let generate_ml, generate_c = ref false, ref false in
@@ -10,9 +13,9 @@ let _ =
   | true, true ->
     failwith "Exactly one of -ml and -c must be specified"
   | true, false ->
-    Cstubs.write_ml Format.std_formatter ~prefix (module Ffi_bindings.Bindings)
+    Cstubs.write_ml Format.std_formatter ~prefix (module B)
   | false, true ->
-     print_endline ("#include <CXErrorCode.h>");
-     print_endline ("#include <CXString.h>");
-     print_endline ("#include <Index.h>");
-     Cstubs.write_c Format.std_formatter ~prefix (module Ffi_bindings.Bindings)
+     print_endline ("#include \"CXErrorCode.h\"");
+     print_endline ("#include \"CXString.h\"");
+     print_endline ("#include \"Index.h\"");
+     Cstubs.write_c Format.std_formatter ~prefix (module B)

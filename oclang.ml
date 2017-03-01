@@ -1,8 +1,7 @@
 open Ctypes
-open Foreign
 
-module B = Ffi_bindings.Bindings(Ffi_generated)
-module Types = B.T
+module B = Ffi_bindings.Bindings(Ffi_generated_types)(Ffi_generated)
+module Types = B.E
 
 let bool_val b =
   if b then 1 else 0
@@ -30,7 +29,7 @@ module Type =
       B.get_type_spelling t |> B.getcstring_
 
     let kind t =
-      getf t B.kind
+      getf t Types.kind
   end
 
 
@@ -66,19 +65,6 @@ module Cursor =
     let kind = Types.cursor_kind
     let cursor_of_translation_unit tu = B.cursor_of_translation_unit_ tu 
 
-    let vistor cursor parent client_data =
-      (* let l = Root.get client_data in *)
-      (* let l' = List.cons cursor l in *)
-      (* Root.set client_data l'; *)
-      Types.VisitContinue
-      
-                                      
-    let children cursor =
-      let f = B.coerce B.cx_cursor_visitor vistor in
-      let i = B.visit_children_ cursor f (to_voidp (allocate int 1)) in
-      Printf.printf "HI2\n"; flush stdout;
-      i
-
     let name cursor =
       let i = (B.get_cursor_spelling cursor) in
       let s = B.getcstring_ i in
@@ -92,7 +78,35 @@ module Cursor =
       s
 
     let cursor_is_null cursor =
-      B.cursor_is_null cursor 
+      B.cursor_is_null cursor
+
+    let coerce_visitor f =
+       coerce (Foreign.funptr B.cx_cursor_visitor) (static_funptr B.cx_cursor_visitor) f
+      
+    let visit cur visitor_func data =
+      let data' = ref data in
+      let w f data =
+        (fun cur par _ ->
+          let res, new_data = f cur par !data' in
+          data' := new_data;
+          res 
+        )
+      in
+      let _ = B.visit_children_ cur (coerce_visitor (w visitor_func data')) null in
+      !data'
+
+    let num_children cur =
+      let visitor c p d =
+        Types.VisitContinue, d+1
+      in
+      visit cur visitor 0
+
+    let children cur =
+      let visitor c p d =
+        Types.VisitContinue, List.cons c d
+      in
+      List.rev (visit cur visitor [])
+          
                                       
   end
   
