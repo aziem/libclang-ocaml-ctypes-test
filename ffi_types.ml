@@ -306,6 +306,7 @@ struct
         CreatePreambleOnFirstParse, createpreambleonfirstparse;
         KeepGoing, keepgoing;
       ]
+      
   type cursor_kind = 
     | UnexposedDecl                 
     | StructDecl                    

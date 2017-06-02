@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 4c2451375ed29d45e1d4399103628458) *)
+(* DO NOT EDIT (digest: 5ce5aac480d449478afc14d8d2022759) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -885,13 +885,13 @@ end
 open Ocamlbuild_plugin;;
 let package_default =
   {
-     MyOCamlbuildBase.lib_ocaml = [("clang", [], [])];
-     lib_c = [("clang", ".", [])];
+     MyOCamlbuildBase.lib_ocaml = [("ocamlclang", [], [])];
+     lib_c = [("ocamlclang", ".", [])];
      flags =
        [
-          (["oasis_library_clang_cclib"; "link"],
+          (["oasis_library_ocamlclang_cclib"; "link"],
             [(OASISExpr.EBool true, S [A "-cclib"; A "-lclang"])]);
-          (["oasis_library_clang_cclib"; "ocamlmklib"; "c"],
+          (["oasis_library_ocamlclang_cclib"; "ocamlmklib"; "c"],
             [(OASISExpr.EBool true, S [A "-lclang"])]);
           (["oasis_executable_ffi_stubgen_cclib"; "link"],
             [(OASISExpr.EBool true, S [A "-cclib"; A "-lclang"])]);

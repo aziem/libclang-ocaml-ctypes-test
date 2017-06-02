@@ -9,11 +9,11 @@ Plugins:        DevFiles (0.4), META (0.4)
 BuildTools:     ocamlbuild
 
 
-Library clang
-  FindLibName: clang
+Library ocamlclang
+  FindLibName: ocamlclang
   Install: true
   Path: .
-  Modules: Oclang, Ffi_bindings
+  Modules: Ocamlclang, Ffi_bindings
   InternalModules: Ffi_generated, Ffi_generated_types
   CSources: ffi_generated_stubs.c
   CCLib: -lclang
@@ -40,5 +40,5 @@ Executable test
   Install: false
   Path: .
   MainIs: test.ml
-  BuildDepends: clang
+  BuildDepends: ocamlclang
   CompiledObject: native
