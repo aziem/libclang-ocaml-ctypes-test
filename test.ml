@@ -59,6 +59,16 @@ let print_enums cur =
     in
     Oclang.Cursor.Continue, ()
   in
+
+  let constant_visitor3 cur parent data =
+    let () = match Oclang.Cursor.get_kind cur with
+      | Oclang.Cursor.EnumConstantDecl ->
+        let s = Oclang.Cursor.name cur in
+        Printf.printf "let %s = T.constant \"%s\" T.int_64_t\n" (String.lowercase_ascii s) s
+      | _ -> ()
+    in
+    Oclang.Cursor.Continue, ()
+  in
   
   let visitor cur parent data =
     let () = match Oclang.Cursor.get_kind cur with
@@ -66,11 +76,11 @@ let print_enums cur =
         let s = Oclang.Cursor.name cur in
         Printf.printf "type %s = \n" (String.lowercase_ascii s);
         Oclang.Cursor.visit cur constant_visitor ();
+        Oclang.Cursor.visit cur constant_visitor3 ();
         Printf.printf "let %s = T.enum \"%s\" [ \n" (String.lowercase_ascii s) s;
         Oclang.Cursor.visit cur constant_visitor2 ();
         Printf.printf "]\n";
         ()
-          
       | _ -> ()
     in
     Oclang.Cursor.Continue, ()
@@ -83,7 +93,7 @@ let () =
   let s = Oclang.Util.version () in
   Printf.printf "Hello, clang version is %s\n" s;
   let idex = Oclang.Index.create_index false false in
-  let tu = Oclang.TranslationIndex.create_translation_unit_from_source idex "header.h" [] in
+  let tu = Oclang.TranslationIndex.create_translation_unit_from_source idex Sys.argv.(1) [] in
   Printf.printf "TU: %s\n" (Oclang.TranslationIndex.get_tu_spelling tu); flush stdout;
   let cur = Oclang.Cursor.cursor_of_translation_unit tu in
   print_structs cur;
