@@ -1,0 +1,6 @@
+Code dump of some libclang bindings for OCaml.
+
+Only implemented enough to help me semi-automatically generate code
+for binding C to OCaml using OCaml-Ctypes.
+
+Might be cleaned up in the future. 
