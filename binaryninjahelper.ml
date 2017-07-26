@@ -176,13 +176,28 @@ let print_enums cur =
   in
   Oclang.Cursor.visit cur visitor ()
 
+let visit_linkage_spec_decl cur =
+  (* match Oclang.Cursor.get_kind cur with *)
+  (* | Oclang.Cursor.LinkageSpec -> Printf.printf "BOOYA\n"; print_enums cur *)
+  (* | Oclang.Cursor.Namespace -> Printf.printf "NAMESPACE\n" *)
+  (* | Oclang.Cursor.TranslationUnit -> Printf.printf "Translation unit 2\n" *)
+  (* | _ -> Printf.printf "HERE\n" ;() *)
+  print_enums cur;
+  print_structs cur;
+  print_func_decl cur
+
 let () =
   let s = Oclang.Util.version () in
   Printf.printf "Hello, clang version is %s\n" s;
   let idex = Oclang.Index.create_index false false in
-  let tu = Oclang.TranslationIndex.create_translation_unit_from_source idex Sys.argv.(1) [] in
+  let tu = Oclang.TranslationIndex.create_translation_unit_from_source ~iscpp:true idex Sys.argv.(1) [] in
   Printf.printf "TU: %s\n" (Oclang.TranslationIndex.get_tu_spelling tu); flush stdout;
   let cur = Oclang.Cursor.cursor_of_translation_unit tu in
-  print_structs cur;
-  print_enums cur;
-  print_func_decl cur
+  let ch = Oclang.Cursor.children cur in
+  Printf.printf "ch size: %d\n" (List.length ch);
+  visit_linkage_spec_decl cur;
+  List.iter visit_linkage_spec_decl ch; 
+  (* print_structs cur; *)
+  (* print_enums cur; *)
+  (* print_func_decl cur *)
+  ()

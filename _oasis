@@ -42,3 +42,11 @@ Executable test
   MainIs: test.ml
   BuildDepends: ocamlclang
   CompiledObject: native
+
+Executable binaryninjahelper
+  Install: false
+  Path: .
+  MainIs: binaryninjahelper.ml
+  BuildDepends: ocamlclang
+  CompiledObject: native
+
