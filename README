@@ -1,4 +1,12 @@
-Code dump of some libclang bindings for OCaml.
+Code dump of some libclang bindings for OCaml, using OCaml-Ctypes
+
+
+test.ml shows how to interact with the Clang bindings - used for
+generating OCaml code for use in binding C code with OCaml Ctypes
+
+binaryninja.ml shows how to use a C++ header file to generate OCaml
+code for binding using OCaml Ctypes
+
 
 Only implemented enough to help me semi-automatically generate code
 for binding C to OCaml using OCaml-Ctypes.
