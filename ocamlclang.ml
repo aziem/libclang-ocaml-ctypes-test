@@ -1002,10 +1002,16 @@ module TranslationIndex =
       | Ffi_bindings.CXTranslationUnit_CreatePreambleOnFirstParse -> CreatePreambleOnFirstParse
       | Ffi_bindings.CXTranslationUnit_KeepGoing -> KeepGoing
 
-    let create_translation_unit_from_source index file compiler_options =
+    let create_translation_unit_from_source ?(iscpp=false) index file compiler_options =
+      let compiler_options =
+        if (iscpp) then
+          ["-xc++"]@compiler_options
+        else
+          compiler_options
+      in
       let n = List.length compiler_options in
-      let s = String.concat "," compiler_options in
-      B.create_translation_unit_from_source_ index file n s 0 null
+      let args = CArray.start (CArray.of_list string compiler_options) in
+      B.create_translation_unit_from_source_ index file n args 0 null
 
     let get_tu_spelling tu =
       let i = (B.get_tu_spelling tu) in

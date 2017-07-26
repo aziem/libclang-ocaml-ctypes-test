@@ -1040,7 +1040,7 @@ struct
 
   let create_index_ = F.foreign "clang_createIndex" (int @-> int @-> returning E.cx_index)
                         
-  let create_translation_unit_from_source_ = F.foreign "clang_createTranslationUnitFromSourceFile" (E.cx_index @-> string @-> int @-> string @-> int @-> ptr void @-> returning E.cx_translation_unit)
+  let create_translation_unit_from_source_ = F.foreign "clang_createTranslationUnitFromSourceFile" (E.cx_index @-> string @-> int @-> ptr string @-> int @-> ptr void @-> returning E.cx_translation_unit)
 
   let get_tu_spelling = F.foreign "clang_getTranslationUnitSpelling" (E.cx_translation_unit @-> returning E.cx_string)
 
