@@ -254,7 +254,10 @@ struct
     | StaticAssert                  
     | FirstExtraDecl                
     | LastExtraDecl                 
-    | OverloadCandidate             
+    | OverloadCandidate [@@deriving show]
+
+
+  let print_kind k = Printf.printf "%s" (show_kind k) 
 
   let cx_cursor_kind_of_kind = function
     | UnexposedDecl                         -> Ffi_bindings.CXCursor_UnexposedDecl                 
@@ -750,7 +753,23 @@ struct
       Continue, List.cons c d
     in
     List.rev (visit cur visitor [])
+
+  let get_num_args c =
+    B.clang_cursor_get_num_args c
+
+  let get_arg c i =
+    B.clang_cursor_get_arg c (Unsigned.UInt.of_int i)
       
+  let get_args c =
+    match (get_kind c) with
+    | FunctionDecl ->
+      let numargs = get_num_args c in
+      if numargs=0 then None
+      else
+        begin
+          Some (Array.to_list (Array.init numargs (fun i -> get_arg c i)))
+        end
+    | _ -> None
   
   end
  
@@ -812,9 +831,9 @@ module Type =
       | DependentSizedArray
       | MemberPointer
       | Auto
-      | Elaborated
+      | Elaborated 
 
-
+        
     let kind_to_cx_kind = function 
       | Invalid -> CXTypeInvalid
       | Unexposed -> CXTypeUnexposed
@@ -945,6 +964,12 @@ module Type =
     let get_result_type t =
       B.clang_getresulttype t
 
+    let get_arg_num t =
+      B.clang_get_arg_num t
+        
+    let get_arg_type t i =
+      B.clang_get_arg_type t (Unsigned.UInt.of_int i)
+
     let of_cursor c = (B.clang_of_cursor c)
 
     let get_pointee_type t = B.clang_get_pointee_type t
@@ -1018,6 +1043,18 @@ module TranslationIndex =
       let s = B.getcstring_ i in
       B.disposecstring_ i;
       s
+
+    let parse_translation_unit ?(iscpp=false) index file compiler_options =
+      let compiler_options =
+        if (iscpp) then
+          ["-xc++"]@compiler_options
+        else
+          compiler_options
+      in
+      let n = List.length compiler_options in
+      let args = CArray.start (CArray.of_list string compiler_options) in
+      B.parse_translation_unit index file args n null Unsigned.UInt.zero (Unsigned.UInt.of_int64 B.E.incomplete)
+
   end
 
  

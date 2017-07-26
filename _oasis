@@ -17,7 +17,7 @@ Library ocamlclang
   InternalModules: Ffi_generated, Ffi_generated_types
   CSources: ffi_generated_stubs.c
   CCLib: -lclang
-  BuildDepends: ctypes, ctypes.stubs, ctypes.foreign
+  BuildDepends: ctypes, ctypes.stubs, ctypes.foreign, ppx_deriving.show
   CompiledObject: native
 
 Executable ffi_types_stubgen

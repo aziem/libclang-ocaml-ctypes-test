@@ -39,13 +39,20 @@ let to_snake_case s =
 
 
 let print_func_decl cur =
-  let rec print_type ty =
+  let rec print_type cur ty =
     let tyname = Oclang.Type.name ty in
     begin
       match Oclang.Type.kind ty with
       | Oclang.Type.Pointer ->
         let ptee = Oclang.Type.get_pointee_type ty in
-        Printf.sprintf "T.ptr %s " (print_type ptee)
+        let res =  begin
+            match Oclang.Type.kind ptee with
+            | Oclang.Type.Char_S
+            | Oclang.Type.Char_U -> Printf.sprintf "T.string "
+            | _ ->  Printf.sprintf "T.ptr (%s) " (print_type cur ptee)
+        end
+        in
+        res
       | Oclang.Type.Void -> Printf.sprintf "T.void "
       | Oclang.Type.UInt -> Printf.sprintf "T.size_t"
       | Oclang.Type.Int -> Printf.sprintf "T.int "
@@ -56,12 +63,14 @@ let print_func_decl cur =
     end
   in
   
-  let parm_visitor cur parent data =
+  let rec parm_visitor cur parent data =
     let () = match Oclang.Cursor.get_kind cur with
       | Oclang.Cursor.ParmDecl ->
-        let st = print_type (Oclang.Type.of_cursor cur) in
-        Printf.printf " %s @-> " st
-      | _ -> Printf.printf " %s " (Oclang.Cursor.name cur)
+        let st = print_type cur (Oclang.Type.of_cursor cur) in
+        Printf.printf "BOOYA %s @-> " st
+      | Oclang.Cursor.TypeRef -> Printf.printf "T.void @->"
+      | _ -> Printf.printf " BOO %s " (Oclang.Cursor.name cur)
+               
     in
     Oclang.Cursor.Continue, ()
   in
@@ -70,17 +79,24 @@ let print_func_decl cur =
   let rec visitor cur parent data =
     let () = match Oclang.Cursor.get_kind cur with
       | Oclang.Cursor.FunctionDecl ->
-        let s = Oclang.Cursor.name cur in
         let ty = Oclang.Type.of_cursor cur |> Oclang.Type.get_result_type  in
-        Printf.printf "let %s = F.foreign  \"%s\" (" (to_snake_case s) s;
-        Oclang.Cursor.visit cur parm_visitor ();
-        Printf.printf "returning (%s))\n" (print_type ty)
+        let s = Oclang.Cursor.name cur in
+        let args = Oclang.Cursor.get_args cur in
+        Printf.printf "%d let %s = F.foreign  \"%s\" (" (Oclang.Cursor.get_num_args cur) (to_snake_case s) s;
+        let () = begin
+          match args with
+          | Some l ->
+            List.iter (fun c -> Printf.printf " %s @-> " (print_type cur (Oclang.Type.of_cursor c))) l
+          | None -> Oclang.Cursor.visit cur parm_visitor ()
+        end
+        in
+        (* Oclang.Cursor.visit cur parm_visitor (); *)
+        Printf.printf "returning (%s))\n" (print_type cur ty)
       | Oclang.Cursor.LinkageSpec ->
         Printf.printf "LINKAGE: %s\n" (Oclang.Cursor.name cur); ()
       | Oclang.Cursor.Namespace ->
         Printf.printf "Namespace: %s\n" (Oclang.Cursor.name cur); ()
-      | _ -> ();
-        Oclang.Cursor.visit cur visitor ()
+      | _ -> ()
         
     in
     Oclang.Cursor.Continue, ()
@@ -168,8 +184,7 @@ let print_enums cur =
         Oclang.Cursor.visit cur constant_visitor3 ();
         Printf.printf "let %s = T.enum \"%s\" [ \n" (String.lowercase_ascii s) s;
         Oclang.Cursor.visit cur constant_visitor2 ();
-        Printf.printf "]\n";
-        ()
+        Printf.printf "]\n"
       | _ -> ()
     in
     Oclang.Cursor.Continue, ()
@@ -177,11 +192,6 @@ let print_enums cur =
   Oclang.Cursor.visit cur visitor ()
 
 let visit_linkage_spec_decl cur =
-  (* match Oclang.Cursor.get_kind cur with *)
-  (* | Oclang.Cursor.LinkageSpec -> Printf.printf "BOOYA\n"; print_enums cur *)
-  (* | Oclang.Cursor.Namespace -> Printf.printf "NAMESPACE\n" *)
-  (* | Oclang.Cursor.TranslationUnit -> Printf.printf "Translation unit 2\n" *)
-  (* | _ -> Printf.printf "HERE\n" ;() *)
   print_enums cur;
   print_structs cur;
   print_func_decl cur
@@ -190,14 +200,11 @@ let () =
   let s = Oclang.Util.version () in
   Printf.printf "Hello, clang version is %s\n" s;
   let idex = Oclang.Index.create_index false false in
-  let tu = Oclang.TranslationIndex.create_translation_unit_from_source ~iscpp:true idex Sys.argv.(1) [] in
+  (* let tu = Oclang.TranslationIndex.create_translation_unit_from_source ~iscpp:true idex Sys.argv.(1) [] in *)
+  let tu = Oclang.TranslationIndex.parse_translation_unit ~iscpp:true idex Sys.argv.(1) [] in
   Printf.printf "TU: %s\n" (Oclang.TranslationIndex.get_tu_spelling tu); flush stdout;
   let cur = Oclang.Cursor.cursor_of_translation_unit tu in
   let ch = Oclang.Cursor.children cur in
   Printf.printf "ch size: %d\n" (List.length ch);
   visit_linkage_spec_decl cur;
-  List.iter visit_linkage_spec_decl ch; 
-  (* print_structs cur; *)
-  (* print_enums cur; *)
-  (* print_func_decl cur *)
-  ()
+  List.iter visit_linkage_spec_decl ch

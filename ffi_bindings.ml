@@ -1042,6 +1042,8 @@ struct
                         
   let create_translation_unit_from_source_ = F.foreign "clang_createTranslationUnitFromSourceFile" (E.cx_index @-> string @-> int @-> ptr string @-> int @-> ptr void @-> returning E.cx_translation_unit)
 
+  let parse_translation_unit = F.foreign "clang_parseTranslationUnit" (E.cx_index @-> string @-> ptr string @-> int @-> ptr void @-> uint @-> uint @-> returning E.cx_translation_unit)
+
   let get_tu_spelling = F.foreign "clang_getTranslationUnitSpelling" (E.cx_translation_unit @-> returning E.cx_string)
 
   let cursor_of_translation_unit_ = F.foreign "clang_getTranslationUnitCursor" (E.cx_translation_unit @-> returning E.cx_cursor)
@@ -1073,6 +1075,13 @@ struct
   let clang_get_field_bit_width = F.foreign "clang_getFieldDeclBitWidth" F.(E.cx_cursor @-> returning int)
 
   let clang_get_canonical_type = F.foreign "clang_getCanonicalType" F.(E.cx_type @-> returning E.cx_type)
-  
+
+  let clang_get_arg_type = F.foreign "clang_getArgType" F.(E.cx_type @-> T.uint @-> returning E.cx_type)
+
+  let clang_get_arg_num = F.foreign "clang_getNumArgTypes" F.(E.cx_type @-> returning T.int)
+
+  let clang_cursor_get_num_args = F.foreign "clang_Cursor_getNumArguments" F.(E.cx_cursor @-> returning T.int)
+
+  let clang_cursor_get_arg = F.foreign "clang_Cursor_getArgument" F.(E.cx_cursor @-> T.uint @-> returning E.cx_cursor)
   
 end
