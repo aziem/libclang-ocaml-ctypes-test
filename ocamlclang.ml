@@ -1053,6 +1053,7 @@ module TranslationIndex =
       in
       let n = List.length compiler_options in
       let args = CArray.start (CArray.of_list string compiler_options) in
+      (* Hard coding incomplete flag for now *)
       B.parse_translation_unit index file args n null Unsigned.UInt.zero (Unsigned.UInt.of_int64 B.E.incomplete)
 
   end

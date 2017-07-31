@@ -36,10 +36,10 @@ Executable ffi_stubgen
   CompiledObject: native
 
 
-Executable test
+Executable generate_bindings
   Install: false
   Path: .
-  MainIs: test.ml
+  MainIs: generate_bindings.ml
   BuildDepends: ocamlclang
   CompiledObject: native
 
