@@ -1,5 +1,8 @@
 module Oclang = Ocamlclang
 
+let verbose = ref false
+let cppmode = ref false
+let filename = ref ""
 
 let explode s =
   let rec expl i l =
@@ -39,13 +42,21 @@ let to_snake_case s =
 
 
 let print_func_decl cur =
-  let rec print_type ty =
+  let rec print_type cur ty =
     let tyname = Oclang.Type.name ty in
     begin
       match Oclang.Type.kind ty with
       | Oclang.Type.Pointer ->
         let ptee = Oclang.Type.get_pointee_type ty in
-        Printf.sprintf "T.ptr %s " (print_type ptee)
+        let res =  begin
+          (* If its a char pointer, just return string *)
+            match Oclang.Type.kind ptee with
+            | Oclang.Type.Char_S
+            | Oclang.Type.Char_U -> Printf.sprintf "T.string "
+            | _ ->  Printf.sprintf "T.ptr (%s) " (print_type cur ptee)
+        end
+        in
+        res
       | Oclang.Type.Void -> Printf.sprintf "T.void "
       | Oclang.Type.UInt -> Printf.sprintf "T.size_t"
       | Oclang.Type.Int -> Printf.sprintf "T.int "
@@ -59,7 +70,7 @@ let print_func_decl cur =
   let parm_visitor cur parent data =
     let () = match Oclang.Cursor.get_kind cur with
       | Oclang.Cursor.ParmDecl ->
-        let st = print_type (Oclang.Type.of_cursor cur) in
+        let st = print_type cur (Oclang.Type.of_cursor cur) in
         Printf.printf " %s @-> " st
       | _ -> Printf.printf " %s " (Oclang.Cursor.name cur)
     in
@@ -74,7 +85,7 @@ let print_func_decl cur =
         let ty = Oclang.Type.of_cursor cur |> Oclang.Type.get_result_type  in
         Printf.printf "let %s = F.foreign  \"%s\" (" (to_snake_case s) s;
         Oclang.Cursor.visit cur parm_visitor ();
-        Printf.printf "returning (%s))\n" (print_type ty)
+        Printf.printf "returning (%s))\n" (print_type cur ty)
       | Oclang.Cursor.LinkageSpec ->
         Printf.printf "LINKAGE: %s\n" (Oclang.Cursor.name cur); ()
       | Oclang.Cursor.Namespace ->
@@ -122,10 +133,6 @@ let print_structs cur =
   Oclang.Cursor.visit cur visitor ()
 
 let print_enums cur =
-  let print_enum cur =
-    Printf.printf "ENUM: %s\n" (Oclang.Cursor.name cur);
-  in
-
   let print_enum_constant cur =
     Printf.printf "\t| %s\n" (Oclang.Cursor.name cur);
   in
@@ -176,14 +183,29 @@ let print_enums cur =
   in
   Oclang.Cursor.visit cur visitor ()
 
-let () =
-  let s = Oclang.Util.version () in
-  Printf.printf "Hello, clang version is %s\n" s;
-  let idex = Oclang.Index.create_index false false in
-  let cur =
-    Oclang.TranslationIndex.create_translation_unit_from_source idex Sys.argv.(1) [] |>
-    Oclang.Cursor.cursor_of_translation_unit
-  in
+let print_info cur = 
   print_structs cur;
   print_enums cur;
   print_func_decl cur
+
+
+let () =
+  let speclist =
+    [ ("-cppmode", Arg.Set cppmode, "Enables c++ mode parsing");
+      ("-file", Arg.Set_string filename, "File name to parse");]
+  in
+  let usage_msg = "Pass a C header file to get some OCaml bindings out" in
+  Arg.parse speclist print_endline usage_msg;
+  let s = Oclang.Util.version () in
+  Printf.printf "Clang version is %s\n" s;
+  let idex = Oclang.Index.create_index false false in
+  let cur =
+    Oclang.TranslationIndex.parse_translation_unit ~iscpp:!cppmode idex !filename [] |>
+    Oclang.Cursor.cursor_of_translation_unit
+  in
+  print_info cur;
+  if(!cppmode) then
+    begin
+      let ch = Oclang.Cursor.children cur in
+      List.iter print_info ch
+    end

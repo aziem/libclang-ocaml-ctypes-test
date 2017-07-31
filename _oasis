@@ -35,18 +35,9 @@ Executable ffi_stubgen
   BuildDepends: ctypes.stubs, ctypes.foreign
   CompiledObject: native
 
-
 Executable generate_bindings
   Install: false
   Path: .
   MainIs: generate_bindings.ml
   BuildDepends: ocamlclang
   CompiledObject: native
-
-Executable binaryninjahelper
-  Install: false
-  Path: .
-  MainIs: binaryninjahelper.ml
-  BuildDepends: ocamlclang
-  CompiledObject: native
-
