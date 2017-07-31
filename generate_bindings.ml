@@ -189,15 +189,20 @@ let () =
   in
   let usage_msg = "Pass a C header file to get some OCaml bindings out" in
   Arg.parse speclist print_endline usage_msg;
-  Printf.printf "Clang version is %s\n" (Oclang.Util.version ());
-  let idex = Oclang.Index.create_index false false in
-  let cur =
-    Oclang.TranslationIndex.parse_translation_unit ~iscpp:!cppmode idex !filename [] |>
-    Oclang.Cursor.cursor_of_translation_unit
-  in
-  print_info cur;
-  if(!cppmode) then
-    begin
-      let ch = Oclang.Cursor.children cur in
-      List.iter print_info ch
-    end
+  match !filename with
+  | "" -> Printf.printf "Error, no file name provided. Use -file <filename>\n"
+  | _ ->
+    Printf.printf "Clang version is %s\n" (Oclang.Util.version ());
+    Printf.printf "Processing File: %s\n" !filename;
+    let idex = Oclang.Index.create_index false false in
+    let cur =
+      Oclang.TranslationIndex.parse_translation_unit ~iscpp:!cppmode idex !filename [] |>
+      Oclang.Cursor.cursor_of_translation_unit
+    in
+    print_info cur;
+    if(!cppmode) then
+      begin
+        let ch = Oclang.Cursor.children cur in
+        List.iter print_info ch
+      end
+      
