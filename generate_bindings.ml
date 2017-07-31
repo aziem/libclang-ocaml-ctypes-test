@@ -86,10 +86,6 @@ let print_func_decl cur =
         Printf.printf "let %s = F.foreign  \"%s\" (" (to_snake_case s) s;
         Oclang.Cursor.visit cur parm_visitor ();
         Printf.printf "returning (%s))\n" (print_type cur ty)
-      | Oclang.Cursor.LinkageSpec ->
-        Printf.printf "LINKAGE: %s\n" (Oclang.Cursor.name cur); ()
-      | Oclang.Cursor.Namespace ->
-        Printf.printf "Namespace: %s\n" (Oclang.Cursor.name cur); ()
       | _ -> ();
         Oclang.Cursor.visit cur visitor ()
         
@@ -133,20 +129,17 @@ let print_structs cur =
   Oclang.Cursor.visit cur visitor ()
 
 let print_enums cur =
-  let print_enum_constant cur =
-    Printf.printf "\t| %s\n" (Oclang.Cursor.name cur);
-  in
 
-  let constant_visitor cur parent data =
+  let print_enum_variant cur parent data =
     let () = match Oclang.Cursor.get_kind cur with
-      | Oclang.Cursor.EnumConstantDecl ->
-        print_enum_constant cur;
+      | Oclang.Cursor.EnumConstantDecl -> 
+        Printf.printf "\t| %s\n" (Oclang.Cursor.name cur);
       | _ -> ()
     in
     Oclang.Cursor.Continue, ()
   in
 
-  let constant_visitor2 cur parent data =
+  let print_bind_variant_to_decls cur parent data =
     let () = match Oclang.Cursor.get_kind cur with
       | Oclang.Cursor.EnumConstantDecl ->
         let s = Oclang.Cursor.name cur in
@@ -156,7 +149,7 @@ let print_enums cur =
     Oclang.Cursor.Continue, ()
   in
 
-  let constant_visitor3 cur parent data =
+  let print_enum_constant_decls cur parent data =
     let () = match Oclang.Cursor.get_kind cur with
       | Oclang.Cursor.EnumConstantDecl ->
         let s = Oclang.Cursor.name cur in
@@ -171,10 +164,10 @@ let print_enums cur =
       | Oclang.Cursor.EnumDecl ->
         let s = Oclang.Cursor.name cur in
         Printf.printf "type %s = \n" (String.lowercase_ascii s);
-        Oclang.Cursor.visit cur constant_visitor ();
-        Oclang.Cursor.visit cur constant_visitor3 ();
+        Oclang.Cursor.visit cur print_enum_variant ();
+        Oclang.Cursor.visit cur print_enum_constant_decls ();
         Printf.printf "let %s = T.enum \"%s\" [ \n" (String.lowercase_ascii s) s;
-        Oclang.Cursor.visit cur constant_visitor2 ();
+        Oclang.Cursor.visit cur print_bind_variant_to_decls ();
         Printf.printf "]\n";
         ()
       | _ -> ()
@@ -196,8 +189,7 @@ let () =
   in
   let usage_msg = "Pass a C header file to get some OCaml bindings out" in
   Arg.parse speclist print_endline usage_msg;
-  let s = Oclang.Util.version () in
-  Printf.printf "Clang version is %s\n" s;
+  Printf.printf "Clang version is %s\n" (Oclang.Util.version ());
   let idex = Oclang.Index.create_index false false in
   let cur =
     Oclang.TranslationIndex.parse_translation_unit ~iscpp:!cppmode idex !filename [] |>
