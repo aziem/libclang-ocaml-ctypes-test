@@ -153,7 +153,7 @@ let print_enums cur =
     let () = match Oclang.Cursor.get_kind cur with
       | Oclang.Cursor.EnumConstantDecl ->
         let s = Oclang.Cursor.name cur in
-        Printf.printf "let %s = T.constant \"%s\" T.uint64_t\n" (String.lowercase_ascii s) s
+        Printf.printf "let %s = T.constant \"%s\" T.int64_t\n" (String.lowercase_ascii s) s
       | _ -> ()
     in
     Oclang.Cursor.Continue, ()
