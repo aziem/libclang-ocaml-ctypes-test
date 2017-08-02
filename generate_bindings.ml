@@ -121,7 +121,9 @@ let print_structs cur =
         let s = Oclang.Cursor.name cur in
         Printf.printf "type %s\n" (to_snake_case (Oclang.Cursor.name cur));
         print_struct_name cur;
-        Oclang.Cursor.visit cur (field_visitor (to_snake_case s)) ()
+        Oclang.Cursor.visit cur (field_visitor (to_snake_case s)) ();
+        Printf.printf "let () = T.seal %s\n" (to_snake_case (Oclang.Cursor.name cur))
+
       | _ -> ()
     in
     Oclang.Cursor.Continue, ()
