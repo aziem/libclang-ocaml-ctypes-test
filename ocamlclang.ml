@@ -711,7 +711,12 @@ struct
   let get_kind c = kind_of_cx_cursor_kind (B.cx_get_cursor_kind c)
                  
   let cursor_of_translation_unit tu = B.cursor_of_translation_unit_ tu 
-      
+
+  let cursor_is_in_system_header cursor =
+    let loc = B.clang_get_cursor_location cursor in
+    let res = clang_location_is_in_system_header loc in
+    res != 0
+
   let name cursor =
     let i = (B.get_cursor_spelling cursor) in
     let s = B.getcstring_ i in
@@ -726,7 +731,7 @@ struct
     
   let cursor_is_null cursor =
     B.cursor_is_null cursor
-      
+
   let coerce_visitor f =
     coerce (Foreign.funptr B.cx_cursor_visitor) (static_funptr B.cx_cursor_visitor) f
       

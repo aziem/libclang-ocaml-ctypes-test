@@ -326,6 +326,7 @@ type cx_child_visit_result =
 type cx_string
 type cx_type
 type cx_cursor
+type cx_source_location
 
 type cx_client_data = unit Ctypes.ptr
 type cx_translation_unit = unit Ctypes.ptr
@@ -1010,6 +1011,11 @@ struct
   let data = Array.init 3 (fun i -> T.field cx_cursor ("data") (T.ptr T.void))
   let () = T.seal cx_cursor 
 
+  let cx_source_location : cx_source_location Ctypes.structure T.typ = T.structure "_CXSourceLocation"
+  let cx_source_location = T.typedef cx_source_location "CXSourceLocation"
+  let cx_source_location_ptr_data = Array.init 2 (fun i -> T.field cx_source_location "ptr_data" (T.ptr T.void))
+  let cx_source_location_int_data = T.field cx_source_location "int_data" (T.uint)
+  let () = T.seal cx_source_location 
 
   let cx_client_data : cx_client_data T.typ = T.ptr T.void 
   
@@ -1083,5 +1089,8 @@ struct
   let clang_cursor_get_num_args = F.foreign "clang_Cursor_getNumArguments" F.(E.cx_cursor @-> returning T.int)
 
   let clang_cursor_get_arg = F.foreign "clang_Cursor_getArgument" F.(E.cx_cursor @-> T.uint @-> returning E.cx_cursor)
-  
+
+  let clang_location_is_in_system_header = F.foreign "clang_Location_isInSystemHeader" F.(E.cx_source_location @-> returning T.int)
+
+  let clang_get_cursor_location = F.foreign "clang_getCursorLocation" F.(E.cx_cursor @-> returning E.cx_source_location)
 end
