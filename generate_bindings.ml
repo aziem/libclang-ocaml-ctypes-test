@@ -260,21 +260,6 @@ let generate_bindings cur =
     ) funcs;
   Printf.printf "end\n"
 
-  
-  
-let new_print_enum (en : enum_info)  =
-  Printf.printf "Enum: %s" en.name;
-  List.iter (fun ed -> Printf.printf "Enum decl: %s\n" ed) en.enumconstants 
-
-let new_print_func ( fn : func_decl ) =
-  Printf.printf "Func: %s" fn.name;
-  List.iter (fun paramt -> Printf.printf "Param: %s\n" paramt) fn.paramtypes;
-  Printf.printf "Returning %s\n" fn.resulttype
-
-let new_print_struct (st:struct_decl) =
-  Printf.printf "Struct: %s" st.name;
-  List.iter (fun (fieldname, typestring) -> Printf.printf "Field: %s of type: %s\n" fieldname typestring) st.fieldnames
-
 let () =
   let speclist =
     [ ("-cppmode", Arg.Set cppmode, "Enables c++ mode parsing");
@@ -292,21 +277,6 @@ let () =
       Oclang.TranslationIndex.parse_translation_unit ~iscpp:!cppmode idex !filename [] |>
       Oclang.Cursor.cursor_of_translation_unit
     in
-
-    (* let enums = gather_enum_info cur in
-     * List.iter new_print_enum enums;
-     * let funcs = gather_func_info cur in
-     * List.iter new_print_func funcs;
-     * let structs = gather_struct_info cur in
-     * List.iter new_print_struct structs; *)
-
-    generate_bindings cur;
+    generate_bindings cur
     
-    (* print_info cur; *)
-    if(!cppmode) then
-      begin
-        let ch = Oclang.Cursor.children cur in
-        (* List.iter print_info ch *)
-        ()
-      end
-      
+     
