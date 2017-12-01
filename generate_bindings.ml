@@ -67,6 +67,8 @@ let rec print_type cur ty =
        let ptee = Oclang.Type.get_pointee_type ty in
        let res =  begin
            match Oclang.Type.kind ptee with
+           |Oclang.Type.SChar
+            | Oclang.Type.WChar
            | Oclang.Type.Char_U
              | Oclang.Type.Char_S
              | Oclang.Type.Char16
@@ -165,6 +167,7 @@ let gather_func_info cur =
        let params = Oclang.Cursor.visit cur _gather_params [] in
        (* Hack - if the no params then assume void is the param type *)
        let params2 = if (List.length params) = 0 then ["T.void"] else params in
+       let params2 = List.rev params2 in
        let ret_type = Oclang.Type.of_cursor cur |> Oclang.Type.get_result_type |> print_type cur in
        let f = { name = Oclang.Cursor.name cur; resulttype = ret_type; paramtypes = params2 } in
        Some f
@@ -181,7 +184,7 @@ let gather_func_info cur =
        | Some funcdecl -> Oclang.Cursor.Recurse, funcdecl::data
        | None -> Oclang.Cursor.Recurse, data
   in
-  Oclang.Cursor.visit cur visitor []
+  List.rev (Oclang.Cursor.visit cur visitor [])
 
 let gather_enum_info cur =
   let _gather_enum_decls cur parent data =
