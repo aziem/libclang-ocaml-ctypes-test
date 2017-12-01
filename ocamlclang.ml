@@ -956,7 +956,7 @@ module Type =
       let s = B.getcstring_ i in
       B.disposecstring_ i;
       s
-    
+
     let kind t =
       cx_kind_to_kind (getf t B.E.cx_type_kind)
 

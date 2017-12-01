@@ -39,5 +39,5 @@ Executable generate_bindings
   Install: false
   Path: .
   MainIs: generate_bindings.ml
-  BuildDepends: ocamlclang
+  BuildDepends: ocamlclang, batteries
   CompiledObject: native
